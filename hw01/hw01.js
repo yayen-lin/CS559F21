@@ -16,25 +16,52 @@ setup = () => {
     var context = canvas.getContext("2d");
     canvas.width = canvas.width; // clear canvas before drawing
 
-    var [startingX, startingY] = [s1.value, s2.value]; // starting points of (x, y) coords
+    var [x, y] = [s1.value, s2.value]; // starting points of (x, y) coords
 
-    drawCube = () => {
-      // settings of coordinate
-      var [x, y] = [startingX, startingY];
+    /**
+     * Draw component (rectangle) of the creeper's head
+     *
+     * startingX: starting position on x-axis
+     * startingY: starting position on y-axis
+     * l: length of the component
+     * c: color of the component
+     */
+    drawRect = (startingX, startingY, l, c) => {
+      context.beginPath();
+      console.log(`startingX = ${startingX}, startingY = ${startingY}`);
+      context.moveTo(startingX, startingY);
+      context.lineTo(startingX + l, y + startingY);
+      context.lineTo(startingX + l, l + startingY);
+      context.lineTo(startingX, l + startingY);
+      context.closePath();
+    };
+
+    drawFace = () => {
+      // settings of size and colors
+      l = 15;
+      colors = [null];
+      componentNums = 3;
+
+      x_ = parseInt(x);
+      y_ = parseInt(y);
       context.beginPath();
 
       // top of the cube
-      context.moveTo(x, y);
-      context.lineTo(100, 100);
-
-      // context.closePath();
-
-      // stroke the solid outline of the cube
-      context.stroke();
+      for (let i = 0; i < componentNums; i++) {
+        for (let j = 0; j < componentNums; j++) {
+          console.log(x_, y_);
+          context.moveTo(x_, y_);
+          drawRect(x_, y_, l, "red");
+          x_ += l;
+          context.stroke();
+        }
+        x_ = parseInt(x);
+        y_ += l;
+      }
     };
     context.save(); // save current state onto a stack
-    context.translate(startingX, startingY);
-    drawCube();
+    context.translate(x, y);
+    drawFace();
     context.restore();
   };
   s1.addEventListener("input", draw);
