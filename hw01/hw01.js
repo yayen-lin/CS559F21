@@ -30,9 +30,9 @@ setup = () => {
       context.beginPath();
       console.log(`startingX = ${startingX}, startingY = ${startingY}`);
       context.moveTo(startingX, startingY);
-      context.lineTo(startingX + l, y + startingY);
-      context.lineTo(startingX + l, l + startingY);
-      context.lineTo(startingX, l + startingY);
+      context.lineTo(startingX + l, startingY);
+      context.lineTo(startingX + l, startingY + l);
+      context.lineTo(startingX, startingY + l);
       context.closePath();
     };
 
@@ -40,7 +40,7 @@ setup = () => {
       // settings of size and colors
       l = 15;
       colors = [null];
-      componentNums = 3;
+      componentNums = 1;
 
       x_ = parseInt(x);
       y_ = parseInt(y);
