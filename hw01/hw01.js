@@ -9,14 +9,20 @@ setup = () => {
   var canvas = document.getElementById("hw01Canvas");
   var s1 = document.getElementById("slider1");
   var s2 = document.getElementById("slider2");
+  var s3 = document.getElementById("slider3");
   s1.value = 0;
   s2.value = 0;
+  s3.value = 15;
 
   draw = () => {
     var context = canvas.getContext("2d");
     canvas.width = canvas.width; // clear canvas before drawing
 
-    var [x, y] = [s1.value, s2.value]; // starting points of (x, y) coords
+    var [x, y, l] = [
+      parseInt(s1.value),
+      parseInt(s2.value),
+      parseInt(s3.value),
+    ]; // starting points of (x, y) coords
 
     drawBackgroundColor = () => {
       context.fillStyle = "#000000";
@@ -65,7 +71,6 @@ setup = () => {
     drawFace = () => {
       // settings of size and colors
       // img found at: https://www.seekpng.com/ipng/u2q8a9e6y3e6o0t4_minecraft-creeper-face-icons-png-minecraft-creeper-head/
-      l = 15;
       colors = [
         [
           [0, 173, 35],
@@ -150,8 +155,8 @@ setup = () => {
       ];
       componentNums = 8;
 
-      x_ = parseInt(x);
-      y_ = parseInt(y);
+      x_ = x;
+      y_ = y;
       context.beginPath();
 
       // top of the cube
@@ -263,6 +268,7 @@ setup = () => {
   };
   s1.addEventListener("input", draw);
   s2.addEventListener("input", draw);
+  s3.addEventListener("input", draw);
   draw();
 };
 
