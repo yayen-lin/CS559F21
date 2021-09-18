@@ -18,6 +18,14 @@ setup = () => {
 
     var [x, y] = [s1.value, s2.value]; // starting points of (x, y) coords
 
+    drawBackgroundColor = () => {
+      context.fillStyle = "#000000";
+      context.beginPath();
+      context.fillRect(0, 0, canvas.width, canvas.height);
+      context.closePath();
+      context.fill();
+    };
+
     /**
      * convert red, green, blue values to hex
      *
@@ -173,11 +181,85 @@ setup = () => {
       context.stroke();
     };
 
+    drawName = () => {
+      context.strokeStyle = "#FFFFFF";
+      context.lineWidth = 5;
+
+      context.beginPath();
+
+      // C
+      context.moveTo(5, 160);
+      context.lineTo(25, 160);
+      context.moveTo(5, 160);
+      context.lineTo(5, 192);
+      context.lineTo(25, 192);
+
+      // R
+      context.moveTo(32, 160);
+      context.lineTo(52, 160);
+      context.moveTo(50, 160);
+      context.lineTo(50, 175);
+      context.lineTo(32, 175);
+      context.moveTo(32, 160);
+      context.lineTo(52, 195);
+      context.moveTo(32, 160);
+      context.lineTo(32, 195);
+
+      // E
+      context.moveTo(59, 160);
+      context.lineTo(79, 160);
+      context.moveTo(59, 160);
+      context.lineTo(59, 193);
+      context.lineTo(79, 193);
+      context.moveTo(59, 176);
+      context.lineTo(79, 176);
+
+      // E
+      context.moveTo(86, 160);
+      context.lineTo(106, 160);
+      context.moveTo(86, 160);
+      context.lineTo(86, 193);
+      context.lineTo(106, 193);
+      context.moveTo(86, 176);
+      context.lineTo(106, 176);
+
+      // P
+      context.moveTo(114, 160);
+      context.lineTo(134, 160);
+      context.lineTo(134, 175);
+      context.lineTo(114, 175);
+      context.moveTo(114, 160);
+      context.lineTo(114, 195);
+
+      // E
+      context.moveTo(142, 160);
+      context.lineTo(162, 160);
+      context.moveTo(142, 160);
+      context.lineTo(142, 193);
+      context.lineTo(162, 193);
+      context.moveTo(142, 176);
+      context.lineTo(162, 176);
+
+      // R
+      context.moveTo(170, 160);
+      context.lineTo(192, 160);
+      context.moveTo(190, 160);
+      context.lineTo(190, 175);
+      context.lineTo(170, 175);
+      context.moveTo(170, 160);
+      context.lineTo(192, 195);
+      context.moveTo(170, 160);
+      context.lineTo(170, 195);
+
+      context.stroke();
+    };
+
+    drawBackgroundColor(); // bottom layer
     context.save(); // save current state onto a stack
     context.translate(x, y);
     drawFace();
     context.restore();
-    drawNameCard();
+    drawName();
   };
   s1.addEventListener("input", draw);
   s2.addEventListener("input", draw);
