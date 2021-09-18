@@ -1,3 +1,6 @@
+# zip files
+*.zip
+
 # lecture demos
 demos/
 
