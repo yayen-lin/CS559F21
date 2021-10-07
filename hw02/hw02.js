@@ -14,11 +14,15 @@ setup = () => {
     cnt.globalCompositeOperation = "destination-over";
     cnt.clearRect(0, 0, canvas.width, canvas.height); // clear canvas
 
+    // center
     var center_x = canvas.width / 2;
     var center_y = canvas.height / 2;
-    var tire_size = ((canvas.width / 2) * 3) / 4;
-    var tire_thickness = tire_size - 25;
+
+    // radius
+    var tire_radius = ((canvas.width / 2) * 3) / 4;
+    var tire_thickness = tire_radius - 25;
     var rim_outline = tire_thickness - 5;
+    var logo_radius = 20;
 
     /**
      * Return the radian of a given degree
@@ -29,11 +33,44 @@ setup = () => {
       return (degree * Math.PI) / 180;
     }
 
+    /*
+     * this function returns a Path2D object
+     * the path represents a growing line between two given points
+     *
+     * reference: https://stackoverflow.com/a/54112288/13007073
+     */
+    function createGrowingLine(x1, y1, x2, y2, startWidth, endWidth) {
+      // calculate direction vector of point 1 and 2
+      const directionVectorX = x2 - x1,
+        directionVectorY = y2 - y1;
+      // calculate angle of perpendicular vector
+      const perpendicularVectorAngle =
+        Math.atan2(directionVectorY, directionVectorX) + Math.PI / 2;
+      // construct shape
+      const path = new Path2D();
+      path.arc(
+        x1,
+        y1,
+        startWidth / 2,
+        perpendicularVectorAngle,
+        perpendicularVectorAngle + Math.PI
+      );
+      path.arc(
+        x2,
+        y2,
+        endWidth / 2,
+        perpendicularVectorAngle + Math.PI,
+        perpendicularVectorAngle
+      );
+      path.closePath();
+      return path;
+    }
+
     function drawRim() {
       // ################################## draw tire ##################################
       // draw outer tire
       cnt.beginPath();
-      cnt.arc(center_x, center_y, tire_size, toRadian(0), toRadian(360));
+      cnt.arc(center_x, center_y, tire_radius, toRadian(0), toRadian(360));
       cnt.stroke();
 
       // draw inner tire
@@ -61,8 +98,66 @@ setup = () => {
       cnt.beginPath();
       cnt.arc(center_x, center_y, rim_outline, toRadian(298), toRadian(360));
       cnt.stroke();
+
+      // draw center logo
+      cnt.beginPath();
+      cnt.arc(center_x, center_y, logo_radius, toRadian(0), toRadian(360));
+      cnt.stroke();
+
+      cnt.save();
+
+      // =================================
+      // cnt.lineWidth = 3;
+
+      // cnt.beginPath();
+      // cnt.translate(center_x, center_y);
+      // cnt.moveTo(0, 0);
+      // cnt.lineTo(0, -logo_radius);
+      // cnt.save();
+
+      // cnt.moveTo(0, 0);
+      // cnt.rotate(toRadian(120));
+      // cnt.lineTo(0, -logo_radius);
+
+      // cnt.restore();
+      // cnt.rotate(toRadian(-120));
+      // cnt.moveTo(0, 0);
+      // cnt.lineTo(0, -logo_radius);
+
+      // cnt.stroke();
+
+      // cnt.restore();
+      // cnt.restore();
+      // =================================
+
+      cnt.translate(center_x, center_y);
+      cnt.moveTo(0, 0);
+      cnt.lineTo(0, -logo_radius);
+
+      logo_part1 = createGrowingLine(0, 0, 0, -logo_radius, 5, 2);
+      // color and draw growing line
+      // cnt.fillStyle = "green";
+      cnt.fill(logo_part1);
+      cnt.save();
+
+      cnt.moveTo(0, 0);
+      cnt.rotate(toRadian(120));
+      logo_part2 = createGrowingLine(0, 0, 0, -logo_radius, 5, 2);
+      cnt.fill(logo_part2);
+      cnt.restore();
+
+      cnt.moveTo(0, 0);
+      cnt.rotate(toRadian(-120));
+      logo_part3 = createGrowingLine(0, 0, 0, -logo_radius, 5, 2);
+      cnt.fill(logo_part3);
+      cnt.restore();
+
+      cnt.restore();
     }
 
+    /**
+     * spinning
+     */
     function rotateRim() {
       cnt.translate(center_x, center_y);
       cnt.rotate(toRadian(-5));
@@ -71,15 +166,6 @@ setup = () => {
     }
 
     // drawRim();
-
-    // cnt.translate(center_x, center_y);
-
-    // var turnsPerSecond = 3;
-    // var speed = (turnsPerSecond * 2 * Math.PI) / 1000; // in radian per millisecond
-    // cnt.rotate(speed);
-    // // cnt.translate(105, 0);
-
-    var rnd = Math.ceil(Math.random() * 100);
     rotateRim();
     // window.addEventListener("click", mouseClick, false);
 
