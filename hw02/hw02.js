@@ -69,26 +69,24 @@ setup = () => {
     // helper function
     function connectLogoToRimRadius(angle_start, angle_end) {
       // line 1
+      // cnt.save();
+      // cnt.translate(
+      //   cx + logo_radius * Math.cos(toRadian(-angle_start)),
+      //   cy + logo_radius * Math.sin(toRadian(angle_start))
+      // );
+      // cnt.beginPath();
+      // cnt.moveTo(0, 0);
+      // cnt.lineTo(
+      // rim_radius * Math.cos(toRadian(-angle_start)),
+      // rim_radius * Math.sin(toRadian(angle_start))
+      // );
+      // cnt.stroke();
+      // cnt.restore();
       cnt.save();
       cnt.translate(
-        cx + logo_radius * Math.cos(toRadian(-angle_start)),
-        cy + logo_radius * Math.sin(toRadian(angle_start))
-      );
-      cnt.beginPath();
-      cnt.moveTo(0, 0);
-      cnt.lineTo(
         rim_radius * Math.cos(toRadian(-angle_start)),
         rim_radius * Math.sin(toRadian(angle_start))
       );
-      cnt.stroke();
-      cnt.restore();
-
-      // // rotate line 1
-      // cnt.save();
-      // cnt.translate(
-      //   rim_radius * Math.cos(toRadian(-angle_start)),
-      //   rim_radius * Math.sin(toRadian(angle_start))
-      // );
 
       cnt.restore();
 
@@ -154,22 +152,26 @@ setup = () => {
     }
 
     function drawRim() {
+      // ######################## private vars for this function ########################
       cnt.lineWidth = 3;
+      // start_offset + end_offset must sum up to 72 (72 * 5 = 360)
+      let angle_start_offset = 16.5;
+      let angle_end_offset = 72 - angle_start_offset;
       // cnt.globalCompositeOperation = "source-atop";
       // cnt.arc(cx, cy, tire_radius, 0, 2 * Math.PI, false);
 
       // ################################### draw rim ###################################
 
       // ------------------------------ lower right details -----------------------------
-      angle_start = 10;
-      angle_end = 72;
+      var angle_start = angle_start_offset;
+      var angle_end = angle_start + angle_end_offset;
       drawRimRadius(angle_start, angle_end);
       connectLogoToRimRadius(angle_start, angle_end);
 
       // ------------------------------ lower left details -----------------------------
 
-      angle_start = 82;
-      angle_end = 144;
+      angle_start = angle_end + angle_start_offset;
+      angle_end = angle_start + angle_end_offset;
       drawRimRadius(angle_start, angle_end);
       connectLogoToRimRadius(angle_start, angle_end);
 
@@ -178,18 +180,18 @@ setup = () => {
       // cnt.lineTo(400, 400);
       // cnt.stroke();
 
-      angle_start = 154;
-      angle_end = 216;
+      angle_start = angle_end + angle_start_offset;
+      angle_end = angle_start + angle_end_offset;
       drawRimRadius(angle_start, angle_end);
       connectLogoToRimRadius(angle_start, angle_end);
 
-      angle_start = 226;
-      angle_end = 288;
+      angle_start = angle_end + angle_start_offset;
+      angle_end = angle_start + angle_end_offset;
       drawRimRadius(angle_start, angle_end);
       connectLogoToRimRadius(angle_start, angle_end);
 
-      angle_start = 298;
-      angle_end = 360;
+      angle_start = angle_end + angle_start_offset;
+      angle_end = angle_start + angle_end_offset;
       drawRimRadius(angle_start, angle_end);
       connectLogoToRimRadius(angle_start, angle_end);
 
