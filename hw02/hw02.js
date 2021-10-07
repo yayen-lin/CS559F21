@@ -15,13 +15,13 @@ setup = () => {
     cnt.clearRect(0, 0, canvas.width, canvas.height); // clear canvas
 
     // center
-    var center_x = canvas.width / 2;
-    var center_y = canvas.height / 2;
+    var cx = canvas.width / 2;
+    var cy = canvas.height / 2;
 
     // radius
     var tire_radius = ((canvas.width / 2) * 3) / 4;
     var tire_thickness = tire_radius - 25;
-    var rim_outline = tire_thickness - 5;
+    var rim_radius = tire_thickness - 5;
     var logo_radius = 20;
 
     /**
@@ -66,71 +66,69 @@ setup = () => {
       return path;
     }
 
-    function drawRim() {
-      // ################################## draw tire ##################################
-      // draw outer tire
+    // helper function
+    function connectLogoToRimRadius(angle_start, angle_end) {
+      // line 1
+      cnt.save();
+      cnt.translate(
+        cx + logo_radius * Math.cos(toRadian(-angle_start)),
+        cy + logo_radius * Math.sin(toRadian(angle_start))
+      );
       cnt.beginPath();
-      cnt.arc(center_x, center_y, tire_radius, toRadian(0), toRadian(360));
+      cnt.moveTo(0, 0);
+      cnt.lineTo(
+        rim_radius * Math.cos(toRadian(-angle_start)),
+        rim_radius * Math.sin(toRadian(angle_start))
+      );
       cnt.stroke();
+      cnt.restore();
 
-      // draw inner tire
+      // // rotate line 1
+      // cnt.save();
+      // cnt.translate(
+      //   rim_radius * Math.cos(toRadian(-angle_start)),
+      //   rim_radius * Math.sin(toRadian(angle_start))
+      // );
+
+      cnt.restore();
+
+      // line 2
+      cnt.save();
+      cnt.translate(
+        cx + logo_radius * Math.cos(toRadian(-angle_end)),
+        cy + logo_radius * Math.sin(toRadian(angle_end))
+      );
       cnt.beginPath();
-      cnt.arc(center_x, center_y, tire_thickness, toRadian(0), toRadian(360));
+      cnt.moveTo(0, 0);
+      cnt.lineTo(
+        rim_radius * Math.cos(toRadian(-angle_end)),
+        rim_radius * Math.sin(toRadian(angle_end))
+      );
       cnt.stroke();
+      cnt.restore();
+    }
 
-      // ################################### draw rim ###################################
+    // helper function
+    function drawRimRadius(angle_start, angle_end) {
       cnt.beginPath();
-      cnt.arc(center_x, center_y, rim_outline, toRadian(10), toRadian(72));
+      cnt.arc(cx, cy, rim_radius, toRadian(angle_start), toRadian(angle_end));
       cnt.stroke();
+    }
 
+    // helper function
+    function drawCircle(r, c) {
+      cnt.fillStyle = c || null;
       cnt.beginPath();
-      cnt.arc(center_x, center_y, rim_outline, toRadian(82), toRadian(144));
+      cnt.arc(cx, cy, r, toRadian(0), toRadian(360));
       cnt.stroke();
+      cnt.fill();
+    }
 
-      cnt.beginPath();
-      cnt.arc(center_x, center_y, rim_outline, toRadian(154), toRadian(216));
-      cnt.stroke();
-
-      cnt.beginPath();
-      cnt.arc(center_x, center_y, rim_outline, toRadian(226), toRadian(288));
-      cnt.stroke();
-
-      cnt.beginPath();
-      cnt.arc(center_x, center_y, rim_outline, toRadian(298), toRadian(360));
-      cnt.stroke();
-
-      // draw center logo
-      cnt.beginPath();
-      cnt.arc(center_x, center_y, logo_radius, toRadian(0), toRadian(360));
-      cnt.stroke();
-
+    // helper function
+    function drawLogo() {
       cnt.save();
 
-      // =================================
-      // cnt.lineWidth = 3;
-
-      // cnt.beginPath();
-      // cnt.translate(center_x, center_y);
-      // cnt.moveTo(0, 0);
-      // cnt.lineTo(0, -logo_radius);
-      // cnt.save();
-
-      // cnt.moveTo(0, 0);
-      // cnt.rotate(toRadian(120));
-      // cnt.lineTo(0, -logo_radius);
-
-      // cnt.restore();
-      // cnt.rotate(toRadian(-120));
-      // cnt.moveTo(0, 0);
-      // cnt.lineTo(0, -logo_radius);
-
-      // cnt.stroke();
-
-      // cnt.restore();
-      // cnt.restore();
-      // =================================
-
-      cnt.translate(center_x, center_y);
+      cnt.translate(cx, cy);
       cnt.moveTo(0, 0);
       cnt.lineTo(0, -logo_radius);
 
@@ -155,18 +153,72 @@ setup = () => {
       cnt.restore();
     }
 
+    function drawRim() {
+      cnt.lineWidth = 3;
+      // cnt.globalCompositeOperation = "source-atop";
+      // cnt.arc(cx, cy, tire_radius, 0, 2 * Math.PI, false);
+
+      // ################################### draw rim ###################################
+
+      // ------------------------------ lower right details -----------------------------
+      angle_start = 10;
+      angle_end = 72;
+      drawRimRadius(angle_start, angle_end);
+      connectLogoToRimRadius(angle_start, angle_end);
+
+      // ------------------------------ lower left details -----------------------------
+
+      angle_start = 82;
+      angle_end = 144;
+      drawRimRadius(angle_start, angle_end);
+      connectLogoToRimRadius(angle_start, angle_end);
+
+      // test to see where the center is
+      // cnt.moveTo(0, 0);
+      // cnt.lineTo(400, 400);
+      // cnt.stroke();
+
+      angle_start = 154;
+      angle_end = 216;
+      drawRimRadius(angle_start, angle_end);
+      connectLogoToRimRadius(angle_start, angle_end);
+
+      angle_start = 226;
+      angle_end = 288;
+      drawRimRadius(angle_start, angle_end);
+      connectLogoToRimRadius(angle_start, angle_end);
+
+      angle_start = 298;
+      angle_end = 360;
+      drawRimRadius(angle_start, angle_end);
+      connectLogoToRimRadius(angle_start, angle_end);
+
+      // draw logo
+      drawLogo();
+
+      // ################################## draw tire ##################################
+      // draw center logo circle
+      drawCircle(logo_radius, "white");
+
+      // draw inner tire
+      drawCircle(tire_thickness, "white");
+
+      // draw outer tire
+      drawCircle(tire_radius, "black");
+    }
+
     /**
      * spinning
      */
     function rotateRim() {
-      cnt.translate(center_x, center_y);
+      cnt.translate(cx, cy);
       cnt.rotate(toRadian(-5));
-      cnt.translate(-center_x, -center_y);
+      cnt.translate(-cx, -cy);
       drawRim();
     }
 
-    // drawRim();
-    rotateRim();
+    drawRim();
+    // rotateRim();
     // window.addEventListener("click", mouseClick, false);
 
     window.requestAnimationFrame(draw);
