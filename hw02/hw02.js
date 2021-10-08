@@ -32,7 +32,7 @@ setup = () => {
     }
 
     /**
-     * Return the radian of a given degree
+     * convert degree to radian
      * @param {*} degree: to be converted to radian
      * @returns a radian of float type
      */
@@ -78,13 +78,12 @@ setup = () => {
       scale = 0.88;
       cnt.lineWidth = 5;
       // line 1
-      cnt.save();
+      cnt.save(); // save the default state
       cnt.translate(
         cx + logo_radius * Math.cos(toRadian(angle_start)),
         cy + logo_radius * Math.sin(toRadian(angle_start))
-      );
-      cnt.scale(scale, scale);
-      // cnt.rotate(toRadian(30));
+      ); // state is translated
+      cnt.scale(scale, scale); // state is scaled
       cnt.beginPath();
       cnt.moveTo(0, 0);
       cnt.lineTo(
@@ -92,15 +91,15 @@ setup = () => {
         rim_radius * Math.sin(toRadian(angle_start))
       );
       cnt.stroke();
-      cnt.restore();
+      cnt.restore(); // return to default state
 
       // line 2
-      cnt.save();
+      cnt.save(); // save the default state
       cnt.translate(
         cx + logo_radius * Math.cos(toRadian(angle_end)),
         cy + logo_radius * Math.sin(toRadian(angle_end))
-      );
-      cnt.scale(scale, scale);
+      ); // state is translated
+      cnt.scale(scale, scale); // state is scaled
       cnt.beginPath();
       cnt.moveTo(0, 0);
       cnt.lineTo(
@@ -108,7 +107,7 @@ setup = () => {
         rim_radius * Math.sin(toRadian(angle_end))
       );
       cnt.stroke();
-      cnt.restore();
+      cnt.restore(); // return to default state
     }
 
     // helper function for drawRim()
@@ -134,7 +133,7 @@ setup = () => {
     function drawLogo(logoColor) {
       cnt.fillStyle = logoColor || "silver";
 
-      cnt.save(); // default state
+      cnt.save(); // save default state
       cnt.translate(cx, cy); // to translated state
       cnt.save(); // save the translated state
 
@@ -149,13 +148,14 @@ setup = () => {
       cnt.fill(logo_part2);
       cnt.restore(); // return to translated state
 
+      cnt.save(); // save the translated state
       cnt.moveTo(0, 0);
       cnt.rotate(toRadian(-120));
       logo_part3 = createGrowingLine(0, 0, 0, -logo_radius, 5, 2);
       cnt.fill(logo_part3);
       cnt.restore(); // return to translated state
 
-      cnt.restore(); //return to default state
+      cnt.restore(); // return to default state
 
       setToDefault();
     }
@@ -202,9 +202,9 @@ setup = () => {
 
     // helper function
     function drawAMG(c) {
+      // private vars for settings
       cnt.fillStyle = c || "black";
       cnt.strokeStyle = c || "black";
-      // cnt.lineJoin = "bevel";
       var width = 13;
       var height = 15;
       var sx = 10;
@@ -270,6 +270,7 @@ setup = () => {
       cnt.transform(1, 0, 0.7, 1, 0, 0); // state is transformed
       cnt.fillRect(0, 0, 3, 15); // draw \
       cnt.restore(); // return to translated state
+      cnt.save(); // save translated state
       // write |
       cnt.fillRect(21, 0, 3, 15); // draw |
       // write /
@@ -278,7 +279,7 @@ setup = () => {
       cnt.restore(); // return to translated state
       cnt.restore(); // return to default state
 
-      // write G
+      // // write G
       cnt.save(); // save default state
       cnt.translate((sx += width + 21 + 4), sy);
       cnt.save(); // save the translated state
@@ -289,74 +290,76 @@ setup = () => {
       cnt.fillRect(18, 7, 3, 8); // write right |
       cnt.fillRect(8, 7, 10, 3); // write middle -
       cnt.restore(); // return to translated state
-
       cnt.restore(); // return to default state
     }
 
+    // helper function
     function drawCaliper(CaliperColor) {
       cnt.strokeStyle = CaliperColor || "red";
       cnt.fillStyle = CaliperColor || "red";
       cnt.lineJoin = "round";
       cnt.lineWidth = 5;
-      // cnt.translate(cx, cy);
       cnt.beginPath();
       cnt.arc(cx, cy, rim_radius - 15, toRadian(0 - 50), toRadian(0 + 50));
       cnt.closePath();
       cnt.stroke();
       cnt.fill();
-      // cnt.moveTo();
-
-      // test to see where the center is
-      // cnt.moveTo(0, 0);
-      // cnt.lineTo(400, 400);
-      // cnt.stroke();
       setToDefault();
     }
 
     /**
      * main function
-     * orders from top to bottom
      */
     function drawAll() {
-      // draw letter AMG
-      drawAMG("black");
-
+      cnt.save(); // default state
+      cnt.translate(cx, cy);
+      cnt.rotate(toRadian(-70));
+      cnt.translate(-cx, -cy);
+      // =========== anything rotating goes in here ===========
       // draw rim
-      drawRim((rimColor = "silver"), (lw = 5));
-
+      drawRim((rimClor = "silver"), (lw = 5));
       // draw logo
       drawLogo((logoColor = "silver"));
+      // ======================================================
+      // cnt.restore(); // return to default state
 
+      cnt.save();
+      // ============ anything static goes in here ============
       // draw Calipers
-      drawCaliper((CaliperColor = "green"));
+      drawCaliper(
+        (CaliperColor = "#" + Math.floor(Math.random() * 16777215).toString(16))
+      );
+      // draw letter AMG
+      drawAMG(
+        (CaliperColor = "#" + Math.floor(Math.random() * 16999215).toString(16))
+      );
+      // ======================================================
+      cnt.restore();
 
-      // draw center logo circle
-      drawCircle(logo_radius, (fill = "white"), (ss = "silver"), (lw = 5));
-
-      // draw inner tire
-      drawCircle(tire_thickness, (fill = "white"));
-
-      // draw outer tire
-      drawCircle(tire_radius, (fill = "black"));
-    }
-
-    /**
-     * spinning
-     */
-    function rotateRim() {
+      cnt.save(); // default state
       cnt.translate(cx, cy);
       cnt.rotate(toRadian(-5));
       cnt.translate(-cx, -cy);
-      drawAll();
+      // =========== anything rotating goes in here ===========
+      // draw center logo circle
+      drawCircle(logo_radius, (fill = "white"), (ss = "silver"), (lw = 5));
+      // draw inner tire
+      drawCircle(tire_thickness, (fill = "white"));
+      // draw outer tire
+      drawCircle(tire_radius, (fill = "black"));
+      // ======================================================
+      cnt.restore(); // return to default state
     }
 
     drawAll();
-    // rotateRim();
-    // window.addEventListener("click", mouseClick, false);
-
     window.requestAnimationFrame(draw);
-  };
 
+    // test default state
+    // cnt.moveTo(200, 0);
+    // cnt.lineTo(400, 400);
+    // cnt.stroke();
+  };
+  // s1.addEventListener("input", draw);
   draw();
 };
 
