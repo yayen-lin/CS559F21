@@ -24,6 +24,13 @@ setup = () => {
     var rim_radius = tire_thickness - 5;
     var logo_radius = 20;
 
+    function setToDefault() {
+      cnt.strokeStyle = "#000";
+      cnt.lineWidth = 1;
+      cnt.fillStyle = "#000";
+      cnt.lineJoin = "miter";
+    }
+
     /**
      * Return the radian of a given degree
      * @param {*} degree: to be converted to radian
@@ -66,47 +73,45 @@ setup = () => {
       return path;
     }
 
-    // helper function
+    // helper function for drawRim()
     function connectLogoToRimRadius(angle_start, angle_end) {
+      scale = 0.88;
+      cnt.lineWidth = 5;
       // line 1
-      // cnt.save();
-      // cnt.translate(
-      //   cx + logo_radius * Math.cos(toRadian(-angle_start)),
-      //   cy + logo_radius * Math.sin(toRadian(angle_start))
-      // );
-      // cnt.beginPath();
-      // cnt.moveTo(0, 0);
-      // cnt.lineTo(
-      // rim_radius * Math.cos(toRadian(-angle_start)),
-      // rim_radius * Math.sin(toRadian(angle_start))
-      // );
-      // cnt.stroke();
-      // cnt.restore();
       cnt.save();
       cnt.translate(
-        rim_radius * Math.cos(toRadian(-angle_start)),
+        cx + logo_radius * Math.cos(toRadian(angle_start)),
+        cy + logo_radius * Math.sin(toRadian(angle_start))
+      );
+      cnt.scale(scale, scale);
+      // cnt.rotate(toRadian(30));
+      cnt.beginPath();
+      cnt.moveTo(0, 0);
+      cnt.lineTo(
+        rim_radius * Math.cos(toRadian(angle_start)),
         rim_radius * Math.sin(toRadian(angle_start))
       );
-
+      cnt.stroke();
       cnt.restore();
 
       // line 2
       cnt.save();
       cnt.translate(
-        cx + logo_radius * Math.cos(toRadian(-angle_end)),
+        cx + logo_radius * Math.cos(toRadian(angle_end)),
         cy + logo_radius * Math.sin(toRadian(angle_end))
       );
+      cnt.scale(scale, scale);
       cnt.beginPath();
       cnt.moveTo(0, 0);
       cnt.lineTo(
-        rim_radius * Math.cos(toRadian(-angle_end)),
+        rim_radius * Math.cos(toRadian(angle_end)),
         rim_radius * Math.sin(toRadian(angle_end))
       );
       cnt.stroke();
       cnt.restore();
     }
 
-    // helper function
+    // helper function for drawRim()
     function drawRimRadius(angle_start, angle_end) {
       cnt.beginPath();
       cnt.arc(cx, cy, rim_radius, toRadian(angle_start), toRadian(angle_end));
@@ -114,99 +119,225 @@ setup = () => {
     }
 
     // helper function
-    function drawCircle(r, c) {
-      cnt.fillStyle = c || null;
+    function drawCircle(r, fill, ss, lw) {
+      cnt.fillStyle = fill || null;
+      cnt.strokeStyle = ss || null;
+      cnt.lineWidth = lw || null;
       cnt.beginPath();
       cnt.arc(cx, cy, r, toRadian(0), toRadian(360));
       cnt.stroke();
       cnt.fill();
+      setToDefault();
     }
 
     // helper function
-    function drawLogo() {
-      cnt.save();
+    function drawLogo(logoColor) {
+      cnt.fillStyle = logoColor || "silver";
 
-      cnt.translate(cx, cy);
+      cnt.save(); // default state
+      cnt.translate(cx, cy); // to translated state
+      cnt.save(); // save the translated state
+
       cnt.moveTo(0, 0);
       cnt.lineTo(0, -logo_radius);
-
       logo_part1 = createGrowingLine(0, 0, 0, -logo_radius, 5, 2);
-      // color and draw growing line
-      // cnt.fillStyle = "green";
       cnt.fill(logo_part1);
-      cnt.save();
 
       cnt.moveTo(0, 0);
-      cnt.rotate(toRadian(120));
+      cnt.rotate(toRadian(120)); // rotated state
       logo_part2 = createGrowingLine(0, 0, 0, -logo_radius, 5, 2);
       cnt.fill(logo_part2);
-      cnt.restore();
+      cnt.restore(); // return to translated state
 
       cnt.moveTo(0, 0);
       cnt.rotate(toRadian(-120));
       logo_part3 = createGrowingLine(0, 0, 0, -logo_radius, 5, 2);
       cnt.fill(logo_part3);
-      cnt.restore();
+      cnt.restore(); // return to translated state
 
-      cnt.restore();
+      cnt.restore(); //return to default state
+
+      setToDefault();
     }
 
-    function drawRim() {
-      // ######################## private vars for this function ########################
-      cnt.lineWidth = 3;
-      // start_offset + end_offset must sum up to 72 (72 * 5 = 360)
-      let angle_start_offset = 16.5;
-      let angle_end_offset = 72 - angle_start_offset;
-      // cnt.globalCompositeOperation = "source-atop";
-      // cnt.arc(cx, cy, tire_radius, 0, 2 * Math.PI, false);
+    // helper function
+    function drawRim(rimColor, lw) {
+      // private vars for this function
+      cnt.lineWidth = lw || 3;
+      cnt.strokeStyle = rimColor || "red";
+      let angle_start_offset = 16;
+      let angle_end_offset = 72 - angle_start_offset; // 72 * 5 = 360
 
-      // ################################### draw rim ###################################
-
-      // ------------------------------ lower right details -----------------------------
+      // ------------------------------ lower right rim details -----------------------------
       var angle_start = angle_start_offset;
       var angle_end = angle_start + angle_end_offset;
       drawRimRadius(angle_start, angle_end);
       connectLogoToRimRadius(angle_start, angle_end);
 
-      // ------------------------------ lower left details -----------------------------
-
+      // ------------------------------ lower left rim details ------------------------------
       angle_start = angle_end + angle_start_offset;
       angle_end = angle_start + angle_end_offset;
       drawRimRadius(angle_start, angle_end);
       connectLogoToRimRadius(angle_start, angle_end);
+
+      // ------------------------------ left rim details ------------------------------------
+      angle_start = angle_end + angle_start_offset;
+      angle_end = angle_start + angle_end_offset;
+      drawRimRadius(angle_start, angle_end);
+      connectLogoToRimRadius(angle_start, angle_end);
+
+      // ------------------------------ upper rim details -----------------------------------
+      angle_start = angle_end + angle_start_offset;
+      angle_end = angle_start + angle_end_offset;
+      drawRimRadius(angle_start, angle_end);
+      connectLogoToRimRadius(angle_start, angle_end);
+
+      // ------------------------------ upper right rim details -----------------------------
+      angle_start = angle_end + angle_start_offset;
+      angle_end = angle_start + angle_end_offset;
+      drawRimRadius(angle_start, angle_end);
+      connectLogoToRimRadius(angle_start, angle_end);
+      setToDefault();
+    }
+
+    // helper function
+    function drawAMG(c) {
+      cnt.fillStyle = c || "black";
+      cnt.strokeStyle = c || "black";
+      // cnt.lineJoin = "bevel";
+      var width = 13;
+      var height = 15;
+      var sx = 10;
+      var sy = 10;
+
+      cnt.save(); // default state
+      cnt.translate(sx, sy);
+      cnt.transform(1, 0, -0.55, 1, 0, 0); // translated + transformed state
+      cnt.fillRect(0, 0, width, height);
+      cnt.restore(); // return to default state
+
+      cnt.save(); // save the default state
+      cnt.translate((sx += width + 3), sy);
+      cnt.transform(1, 0, -0.62, 1, 0, 0); // translated + transformed state
+      cnt.fillRect(0, 0, (width -= 4), height);
+      cnt.restore(); // return to default state
+
+      cnt.save(); // save the default state
+      cnt.translate((sx += width + 3), sy);
+      cnt.transform(1, 0, -0.66, 1, 0, 0); // translated + transformed state
+      cnt.fillRect(0, 0, (width -= 2), height);
+      cnt.restore(); // return to default state
+
+      cnt.save(); // save the default state
+      cnt.translate((sx += width + 3), sy);
+      cnt.transform(1, 0, -0.66, 1, 0, 0); // translated + transformed state
+      cnt.fillRect(0, 0, (width -= 2), height);
+      cnt.restore(); // return to default state
+
+      cnt.save(); // save the default state
+      cnt.translate((sx += width + 3), sy);
+      cnt.transform(1, 0, -0.66, 1, 0, 0); // translated + transformed state
+      cnt.fillRect(0, 0, (width -= 2), height);
+      cnt.restore(); // return to default state
+
+      // write A
+      // -
+      cnt.save(); // save the default state
+      cnt.translate((sx += width + 2), sy); // translated state
+      cnt.save(); // save the translated state
+      cnt.fillRect(0, 0, 8, 3); // draw -
+      // /
+      cnt.moveTo(0, 0);
+      cnt.transform(1, 0, -0.45, 1, 0, 0); // state is transformed
+      cnt.fillRect(0, 0, 3, 15); // draw /
+      cnt.restore(); // return to translated state
+      // \
+      cnt.save(); // save the translated state
+      cnt.transform(1, 0, 0.45, 1, 0, 0); // state is transformed
+      cnt.fillRect(6, 0, 3, 15); // draw \
+      cnt.restore(); // return to translated state
+      // --
+      cnt.fillRect(-1, 7, 12, 3);
+      cnt.restore(); // return to default state
+
+      // write M
+      cnt.save(); // save default state
+      cnt.translate((sx += width + 12 + 2), sy);
+      cnt.save(); // save the translated state
+      // write |
+      cnt.fillRect(0, 0, 3, 15); // draw |
+      // write \
+      cnt.transform(1, 0, 0.7, 1, 0, 0); // state is transformed
+      cnt.fillRect(0, 0, 3, 15); // draw \
+      cnt.restore(); // return to translated state
+      // write |
+      cnt.fillRect(21, 0, 3, 15); // draw |
+      // write /
+      cnt.transform(1, 0, -0.7, 1, 0, 0); // state is transformed
+      cnt.fillRect(21, 0, 3, 15); // draw /
+      cnt.restore(); // return to translated state
+      cnt.restore(); // return to default state
+
+      // write G
+      cnt.save(); // save default state
+      cnt.translate((sx += width + 21 + 4), sy);
+      cnt.save(); // save the translated state
+
+      cnt.fillRect(0, 0, 20, 3); // write upper -
+      cnt.fillRect(0, 0, 3, 15); // write left |
+      cnt.fillRect(0, 13, 20, 3); // write lower _
+      cnt.fillRect(18, 7, 3, 8); // write right |
+      cnt.fillRect(8, 7, 10, 3); // write middle -
+      cnt.restore(); // return to translated state
+
+      cnt.restore(); // return to default state
+    }
+
+    function drawCaliper(CaliperColor) {
+      cnt.strokeStyle = CaliperColor || "red";
+      cnt.fillStyle = CaliperColor || "red";
+      cnt.lineJoin = "round";
+      cnt.lineWidth = 5;
+      // cnt.translate(cx, cy);
+      cnt.beginPath();
+      cnt.arc(cx, cy, rim_radius - 15, toRadian(0 - 50), toRadian(0 + 50));
+      cnt.closePath();
+      cnt.stroke();
+      cnt.fill();
+      // cnt.moveTo();
 
       // test to see where the center is
       // cnt.moveTo(0, 0);
       // cnt.lineTo(400, 400);
       // cnt.stroke();
+      setToDefault();
+    }
 
-      angle_start = angle_end + angle_start_offset;
-      angle_end = angle_start + angle_end_offset;
-      drawRimRadius(angle_start, angle_end);
-      connectLogoToRimRadius(angle_start, angle_end);
+    /**
+     * main function
+     * orders from top to bottom
+     */
+    function drawAll() {
+      // draw letter AMG
+      drawAMG("black");
 
-      angle_start = angle_end + angle_start_offset;
-      angle_end = angle_start + angle_end_offset;
-      drawRimRadius(angle_start, angle_end);
-      connectLogoToRimRadius(angle_start, angle_end);
-
-      angle_start = angle_end + angle_start_offset;
-      angle_end = angle_start + angle_end_offset;
-      drawRimRadius(angle_start, angle_end);
-      connectLogoToRimRadius(angle_start, angle_end);
+      // draw rim
+      drawRim((rimColor = "silver"), (lw = 5));
 
       // draw logo
-      drawLogo();
+      drawLogo((logoColor = "silver"));
 
-      // ################################## draw tire ##################################
+      // draw Calipers
+      drawCaliper((CaliperColor = "green"));
+
       // draw center logo circle
-      drawCircle(logo_radius, "white");
+      drawCircle(logo_radius, (fill = "white"), (ss = "silver"), (lw = 5));
 
       // draw inner tire
-      drawCircle(tire_thickness, "white");
+      drawCircle(tire_thickness, (fill = "white"));
 
       // draw outer tire
-      drawCircle(tire_radius, "black");
+      drawCircle(tire_radius, (fill = "black"));
     }
 
     /**
@@ -216,10 +347,10 @@ setup = () => {
       cnt.translate(cx, cy);
       cnt.rotate(toRadian(-5));
       cnt.translate(-cx, -cy);
-      drawRim();
+      drawAll();
     }
 
-    drawRim();
+    drawAll();
     // rotateRim();
     // window.addEventListener("click", mouseClick, false);
 
