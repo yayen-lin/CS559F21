@@ -321,7 +321,7 @@ setup = () => {
       // draw logo
       drawLogo((logoColor = "silver"));
       // ======================================================
-      // cnt.restore(); // return to default state
+      cnt.restore(); // return to default state
 
       cnt.save();
       // ============ anything static goes in here ============
@@ -331,7 +331,7 @@ setup = () => {
       );
       // draw letter AMG
       drawAMG(
-        (CaliperColor = "#" + Math.floor(Math.random() * 16999215).toString(16))
+        (CaliperColor = "#" + Math.floor(Math.random() * 19999215).toString(16))
       );
       // ======================================================
       cnt.restore();
