@@ -27,6 +27,12 @@ function setup() {
       ctx.lineTo(res[0], res[1]);
     }
 
+    function quadraticCurveToTx(cpx, cpy, x, y) {
+      var res = vec2.create();
+      vec2.transformMat3(res, [x, y], stack[0]);
+      ctx.quadraticCurveTo(cpx, cpy, res[0], res[1]);
+    }
+
     // helper function
     // reset line settings back to default
     function resetSetting() {
@@ -44,8 +50,8 @@ function setup() {
       ctx.stroke();
     }
 
-    function drawShinChan() {
-      // line setting
+    function drawPants() {
+      // line and fill setting
       ctx.lineWidth = 2;
       ctx.lineJoin = "round";
       ctx.fillStyle = pantsColor;
@@ -91,15 +97,80 @@ function setup() {
       moveToTx(167, 20);
       lineToTx(155, 30);
       ctx.stroke();
+
+      resetSetting();
+    }
+
+    function drawLeg() {
+      // line and fill setting
+      ctx.lineWidth = 2;
+      ctx.lineJoin = "round";
+      ctx.fillStyle = skinColor;
+
+      // draw leg
+      ctx.beginPath();
+      moveToTx(0, 0);
+      lineToTx(-10, 14);
+      // quadraticCurveToTx(100, 350, 10, 40);
+      lineToTx(4, 30);
+      lineToTx(30, 30);
+      lineToTx(16, 14);
+      lineToTx(26, 0);
+      ctx.fill();
+      ctx.stroke();
+    }
+
+    function drawSock() {
+      // fill setting
+      ctx.fillStyle = socksColor;
+
+      ctx.beginPath();
+      moveToTx(4, 30);
+      lineToTx(10, 39); // (3.5, 4)
+      lineToTx(39, 41);
+      lineToTx(29, 29); // (-7, -8)
+      ctx.closePath();
+      ctx.fill();
+      ctx.stroke();
+    }
+
+    function drawShoe() {
+      // fill setting
+      ctx.fillStyle = shoesColor;
+
+      ctx.beginPath();
+      moveToTx(10, 39);
+      lineToTx(10, 49);
+      ctx.stroke();
     }
 
     function main() {
       drawCircle();
 
-      var shinChanToCanvas = mat3.create();
-      mat3.fromTranslation(shinChanToCanvas, [120, 300]);
-      mat3.multiply(stack[0], stack[0], shinChanToCanvas);
-      drawShinChan();
+      // draw pants
+      var pantsToCanvas = mat3.create();
+      mat3.fromTranslation(pantsToCanvas, [120, 270]);
+      mat3.multiply(stack[0], stack[0], pantsToCanvas);
+      drawPants();
+
+      // draw left leg
+      stack.unshift(mat3.clone(stack[0])); // save status
+      var leftLegToCanvas = mat3.create();
+      mat3.fromTranslation(leftLegToCanvas, [5, 45]);
+      mat3.multiply(stack[0], stack[0], leftLegToCanvas);
+      drawLeg();
+      drawSock();
+      drawShoe();
+      stack.unshift();
+
+      // draw right leg
+      stack.unshift(mat3.clone(stack[0])); // save status
+      var rightLegToCanvas = mat3.create();
+      mat3.fromTranslation(rightLegToCanvas, [160, 0]);
+      mat3.scale(rightLegToCanvas, rightLegToCanvas, [-1, 1]);
+      mat3.multiply(stack[0], stack[0], rightLegToCanvas);
+      drawLeg();
+      drawSock();
     }
 
     main();
