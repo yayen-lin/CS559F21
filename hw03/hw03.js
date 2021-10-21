@@ -230,35 +230,36 @@ function setup() {
       ctx.stroke();
     }
 
+    // first gets drawed will lie in the bottom
     function main() {
       drawCircle();
 
       // #################### draw Shin-chan ####################
 
-      // draw pants
-      var pantsToCanvas = mat3.create();
-      mat3.fromTranslation(pantsToCanvas, [120, 270]);
-      mat3.multiply(stack[0], stack[0], pantsToCanvas);
-      drawPants();
-
       // draw left arm
       stack.unshift(mat3.clone(stack[0])); // save
       var leftArmToCanvas = mat3.create();
-      mat3.fromTranslation(leftArmToCanvas, [7, 0]);
+      mat3.fromTranslation(leftArmToCanvas, [127, 270]);
       mat3.multiply(stack[0], stack[0], leftArmToCanvas);
       drawArm();
 
-      // draw right arm
+      // draw right arm (center is now at (127, 270))
       stack.unshift(mat3.clone(stack[0]));
       var rightArmToCanvas = mat3.create();
       mat3.fromTranslation(rightArmToCanvas, [157, 0]);
       mat3.scale(rightArmToCanvas, rightArmToCanvas, [-1, 1]);
       mat3.multiply(stack[0], stack[0], rightArmToCanvas);
       drawArm();
-      stack.shift(); // restore
+      stack.shift(); // restore (center is now back to (127, 270))
 
       // draw butt
       drawButts();
+
+      // draw pants (center is now at (127, 270))
+      var pantsToCanvas = mat3.create();
+      mat3.fromTranslation(pantsToCanvas, [-7, 0]);
+      mat3.multiply(stack[0], stack[0], pantsToCanvas);
+      drawPants();
 
       // draw left leg
       stack.unshift(mat3.clone(stack[0])); // save status
