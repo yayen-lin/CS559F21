@@ -3,6 +3,8 @@ function setup() {
   var ctx = canvas.getContext("2d");
 
   function draw() {
+    var theta1 = -40 * 0.005 * Math.PI;
+    var theta2 = -1 * theta1;
     ctx.clearRect(0, 0, canvas.width, canvas.height); // clear canvas
 
     // colors
@@ -29,13 +31,11 @@ function setup() {
     }
     // ####################################################
 
-    function quadraticCurveToTx(cpx, cpy, x, y) {
-      var res = vec2.create();
-      vec2.transformMat3(res, [x, y], stack[0]);
-      ctx.quadraticCurveTo(cpx, cpy, res[0], res[1]);
+    function addAlpha(color, opacity) {
+      // coerce values so ti is between 0 and 1.
+      var _opacity = Math.round(Math.min(Math.max(opacity || 1, 0), 1) * 255);
+      return color + _opacity.toString(16).toUpperCase();
     }
-
-    function arcToTx(cx, cy, r, rs, re) {}
 
     // helper function
     // reset line settings back to default
@@ -48,9 +48,13 @@ function setup() {
 
     // draw outer circle (the path for Shin-chan to move around)
     function drawCircle() {
+      c = "#" + Math.floor(Math.random() * 15555555).toString(16);
+      ctx.fillStyle = addAlpha(c, 0.5);
+
       var r = 190;
       ctx.beginPath();
       ctx.arc(canvas.width / 2, canvas.height / 2, r, 0, 2 * Math.PI);
+      ctx.fill();
       ctx.stroke();
     }
 
@@ -61,12 +65,12 @@ function setup() {
       // draw butts
       // right butt
       ctx.beginPath();
-      ctx.arc(247, 235, 55, 0, 2 * Math.PI);
+      ctx.arc(245, 237, 55, 0, 2 * Math.PI);
       ctx.fill();
       ctx.stroke();
       // left butt
       ctx.beginPath();
-      ctx.arc(161, 235, 55, 0, 2 * Math.PI);
+      ctx.arc(159, 237, 55, 0, 2 * Math.PI);
       ctx.fill();
       ctx.stroke();
     }
@@ -226,7 +230,7 @@ function setup() {
 
       ctx.beginPath();
       moveToTx(0, 0);
-      lineToTx(-50, -50);
+      lineToTx(100, 100);
       ctx.stroke();
     }
 
@@ -236,32 +240,43 @@ function setup() {
 
       // #################### draw Shin-chan ####################
 
+      // TODO: try fix, or remove
+      // // adjust scale accordingly
+      // sc = 0.7;
+      // stack.unshift(mat3.clone(stack[0]));
+      // var shinChanScale = mat3.create();
+      // mat3.scale(shinChanScale, shinChanScale, [sc, sc]);
+      // mat3.multiply(stack[0], stack[0], shinChanScale);
+
       // draw left arm
       stack.unshift(mat3.clone(stack[0])); // save
       var leftArmToCanvas = mat3.create();
-      mat3.fromTranslation(leftArmToCanvas, [127, 270]);
+      mat3.fromTranslation(leftArmToCanvas, [123, 272]);
+      mat3.rotate(leftArmToCanvas, leftArmToCanvas, theta1);
       mat3.multiply(stack[0], stack[0], leftArmToCanvas);
       drawArm();
+      stack.shift(); // restore, center back to (0, 0)
 
-      // draw right arm (center is now at (127, 270))
+      // draw right arm
       stack.unshift(mat3.clone(stack[0]));
       var rightArmToCanvas = mat3.create();
-      mat3.fromTranslation(rightArmToCanvas, [157, 0]);
+      mat3.fromTranslation(rightArmToCanvas, [280, 272]);
+      mat3.rotate(rightArmToCanvas, rightArmToCanvas, theta2);
       mat3.scale(rightArmToCanvas, rightArmToCanvas, [-1, 1]);
       mat3.multiply(stack[0], stack[0], rightArmToCanvas);
       drawArm();
-      stack.shift(); // restore (center is now back to (127, 270))
+      stack.shift(); // restore (center is now back to (0, 0))
 
       // draw butt
       drawButts();
 
-      // draw pants (center is now at (127, 270))
+      // draw pants (center is now at (123, 272))
       var pantsToCanvas = mat3.create();
-      mat3.fromTranslation(pantsToCanvas, [-7, 0]);
+      mat3.fromTranslation(pantsToCanvas, [116, 272]);
       mat3.multiply(stack[0], stack[0], pantsToCanvas);
       drawPants();
 
-      // draw left leg
+      // draw left leg (center is now at (116, 272))
       stack.unshift(mat3.clone(stack[0])); // save status
       var leftLegToCanvas = mat3.create();
       mat3.fromTranslation(leftLegToCanvas, [5, 45]);
@@ -270,7 +285,7 @@ function setup() {
       drawSock();
       drawShoe();
 
-      // draw right leg
+      // draw right leg (center is now at (121, 317))
       stack.unshift(mat3.clone(stack[0])); // save status
       var rightLegToCanvas = mat3.create();
       mat3.fromTranslation(rightLegToCanvas, [160, 0]);
@@ -280,13 +295,15 @@ function setup() {
       drawSock();
       drawShoe();
 
-      // center at (285, 315)
-      stack.shift(); // restore(), center at (125, 315)
-      stack.shift(); // restore(), center back to (120, 270)
-      // drawTest();
+      // center is now at (281, 315)
+      stack.shift(); // restore(), center at (121, 317)
+      stack.shift(); // restore(), center back to (123, 272)
+      stack.shift(); // restore(), center back to (0, 0)
+      // drawTest(); // TODO: remove this line
     }
 
     main();
+    window.requestAnimationFrame(draw);
   }
 
   draw();
