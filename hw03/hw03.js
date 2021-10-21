@@ -6,7 +6,7 @@ function setup() {
   var slider3 = document.getElementById("slider3");
   slider1.value = 150;
   slider2.value = 1;
-  slider3.value = 1;
+  slider3.value = 100;
 
   function draw() {
     // if (slider1.value < 160) {
@@ -15,10 +15,15 @@ function setup() {
     // } else {
     //   // let the arms rotate by itself when it reaches 160
     // }
+    var cx = canvas.width / 2;
+    var cy = canvas.height / 2;
     var theta1 = slider1.value * 0.005 * Math.PI + 180;
     var theta2 = -1 * theta1;
-    var rotateSpeed = slider2.value * 0.1;
+    var theta3 = slider2.value * 0.005 * Math.PI;
+    var bouncingScale = slider3.value * 0.01;
     ctx.clearRect(0, 0, canvas.width, canvas.height); // clear canvas
+
+    // use Date.now() % 10;
 
     // colors
     const pantsColor = "#f1f388";
@@ -43,6 +48,12 @@ function setup() {
       ctx.lineTo(res[0], res[1]);
     }
     // ####################################################
+
+    function arcToTx(cx, cy, r, sr, er) {
+      var res = vec2.create();
+      vec2.transformMat3(res, [cx, cy], stack[0]);
+      ctx.arc(res[0], res[1], r, sr, er);
+    }
 
     // reference: https://stackoverflow.com/a/68398236
     function addAlpha(color, opacity) {
@@ -69,7 +80,7 @@ function setup() {
       var r = 190;
       ctx.beginPath();
       ctx.arc(canvas.width / 2, canvas.height / 2, r, 0, 2 * Math.PI);
-      ctx.fill();
+      // ctx.fill();
       ctx.stroke();
     }
 
@@ -80,12 +91,14 @@ function setup() {
       // draw butts
       // right butt
       ctx.beginPath();
-      ctx.arc(245, 237, 55, 0, 2 * Math.PI);
+      // ctx.arc(245, 237, 55, 0, 2 * Math.PI);
+      arcToTx(0, 0, 55, 0, 2 * Math.PI);
       ctx.fill();
       ctx.stroke();
       // left butt
       ctx.beginPath();
-      ctx.arc(159, 237, 55, 0, 2 * Math.PI);
+      // ctx.arc(159, 237, 55, 0, 2 * Math.PI);
+      arcToTx(-86, 0, 55, 0, 2 * Math.PI);
       ctx.fill();
       ctx.stroke();
     }
@@ -238,50 +251,53 @@ function setup() {
       ctx.stroke();
     }
 
-    function rotateShinChan() {
-      var cx = 200;
-      var cy = 200;
-      ctx.save(); // default state
-      ctx.translate(cx, cy);
-      ctx.rotate(rotateSpeed * 0.05 * Math.PI);
-      ctx.translate(-cx, -cy);
+    function drawTest() {
+      ctx.beginPath();
+      moveToTx(0, 0);
+      lineToTx(300, 300);
+      ctx.stroke();
     }
 
-    // first gets drawed will lie in the bottom
-    function main() {
-      drawCircle();
-
+    function drawShinChan() {
       // #################### draw Shin-chan ####################
+      // origin = (cx, cy) = (200, 200)
 
       // draw left arm
       stack.unshift(mat3.clone(stack[0])); // save
       var leftArmToCanvas = mat3.create();
-      mat3.fromTranslation(leftArmToCanvas, [123, 272]);
+      mat3.fromTranslation(leftArmToCanvas, [-77, 72]);
+      // mat3.fromTranslation(leftArmToCanvas, [123, 272]);
       mat3.rotate(leftArmToCanvas, leftArmToCanvas, theta1);
       mat3.multiply(stack[0], stack[0], leftArmToCanvas);
       drawArm();
-      stack.shift(); // restore, center back to (0, 0)
+      stack.shift(); // restore, origin back to (cx, cy)
 
       // draw right arm
       stack.unshift(mat3.clone(stack[0]));
       var rightArmToCanvas = mat3.create();
-      mat3.fromTranslation(rightArmToCanvas, [280, 272]);
+      mat3.fromTranslation(rightArmToCanvas, [80, 72]);
       mat3.rotate(rightArmToCanvas, rightArmToCanvas, theta2);
       mat3.scale(rightArmToCanvas, rightArmToCanvas, [-1, 1]);
       mat3.multiply(stack[0], stack[0], rightArmToCanvas);
       drawArm();
-      stack.shift(); // restore (center is now back to (0, 0))
+      stack.shift(); // restore, origin back to (cx, cy)
 
       // draw butt
+      stack.unshift(mat3.clone(stack[0]));
+      var buttsToCanvas = mat3.create();
+      mat3.fromTranslation(buttsToCanvas, [45, 37]);
+      mat3.multiply(stack[0], stack[0], buttsToCanvas);
       drawButts();
+      stack.shift(); // restore, origin back to (cx, cy)
 
-      // draw pants (center is now at (123, 272))
+      // draw pants, origin at (cx, cy)
       var pantsToCanvas = mat3.create();
-      mat3.fromTranslation(pantsToCanvas, [116, 272]);
+      // mat3.fromTranslation(pantsToCanvas, [116, 272]);
+      mat3.fromTranslation(pantsToCanvas, [-84, 72]);
       mat3.multiply(stack[0], stack[0], pantsToCanvas);
       drawPants();
 
-      // draw left leg (center is now at (116, 272))
+      // draw left leg (origin is now at (116, 272))
       stack.unshift(mat3.clone(stack[0])); // save status
       var leftLegToCanvas = mat3.create();
       mat3.fromTranslation(leftLegToCanvas, [5, 45]);
@@ -290,7 +306,7 @@ function setup() {
       drawSock();
       drawShoe();
 
-      // draw right leg (center is now at (121, 317))
+      // draw right leg (origin is now at (121, 317))
       stack.unshift(mat3.clone(stack[0])); // save status
       var rightLegToCanvas = mat3.create();
       mat3.fromTranslation(rightLegToCanvas, [160, 0]);
@@ -300,12 +316,25 @@ function setup() {
       drawSock();
       drawShoe();
 
-      // center is now at (281, 315)
-      stack.shift(); // restore(), center at (121, 317)
-      stack.shift(); // restore(), center back to (123, 272)
-      stack.shift(); // restore(), center back to (0, 0)
+      // origin is now at (281, 315)
+      stack.shift(); // restore(), origin at (121, 317)
+      stack.shift(); // restore(), origin back to (123, 272)
+      // stack.shift(); // restore(), origin back to (0, 0)
+    }
 
-      rotateShinChan();
+    // first gets drawed will lie in the bottom
+    function main() {
+      drawCircle();
+
+      stack.unshift(mat3.clone(stack[0])); // save
+      var shinChan = mat3.create();
+      mat3.fromTranslation(shinChan, [cx, cy]);
+      mat3.rotate(shinChan, shinChan, theta3);
+      mat3.scale(shinChan, shinChan, [1, bouncingScale]);
+      mat3.multiply(stack[0], stack[0], shinChan);
+      // drawTest();
+      drawShinChan();
+      stack.shift();
     }
 
     main();
@@ -314,6 +343,7 @@ function setup() {
 
   slider1.addEventListener("input", draw);
   slider2.addEventListener("input", draw);
+  slider3.addEventListener("input", draw);
   draw();
 }
 window.onload = setup;
