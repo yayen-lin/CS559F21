@@ -4,5 +4,8 @@
 # lecture demos
 demos/
 
+# image source
+img_src/
+
 # macs
 .DS_Store

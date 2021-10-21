@@ -126,9 +126,9 @@ function setup() {
 
       ctx.beginPath();
       moveToTx(4, 30);
-      lineToTx(10, 39); // (3.5, 4)
-      lineToTx(39, 41);
-      lineToTx(29, 29); // (-7, -8)
+      lineToTx(13, 42);
+      lineToTx(39, 44);
+      lineToTx(29, 29);
       ctx.closePath();
       ctx.fill();
       ctx.stroke();
@@ -139,9 +139,26 @@ function setup() {
       ctx.fillStyle = shoesColor;
 
       ctx.beginPath();
-      moveToTx(10, 39);
-      lineToTx(10, 49);
+      moveToTx(10, 42);
+      lineToTx(16, 47);
+      lineToTx(5, 50);
+      lineToTx(3, 51);
+      lineToTx(2, 52);
+      lineToTx(1, 54);
+      lineToTx(2, 55);
+      lineToTx(3, 56);
+      lineToTx(47, 56);
+      lineToTx(48, 55);
+      lineToTx(49, 54);
+      lineToTx(48, 53);
+      lineToTx(47, 52);
+      lineToTx(39, 44);
+      ctx.fill();
       ctx.stroke();
+    }
+
+    function drawArm() {
+      // pass
     }
 
     function main() {
@@ -161,6 +178,7 @@ function setup() {
       drawLeg();
       drawSock();
       drawShoe();
+      drawArm();
       stack.unshift();
 
       // draw right leg
@@ -171,6 +189,9 @@ function setup() {
       mat3.multiply(stack[0], stack[0], rightLegToCanvas);
       drawLeg();
       drawSock();
+      drawShoe();
+      drawArm();
+      stack.unshift();
     }
 
     main();
