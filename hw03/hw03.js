@@ -1,9 +1,11 @@
 function setup() {
   var canvas = document.getElementById("hw03Canvas");
   var ctx = canvas.getContext("2d");
+  var slider1 = document.getElementById("slider1");
+  slider1.value = 150;
 
   function draw() {
-    var theta1 = -40 * 0.005 * Math.PI;
+    var theta1 = slider1.value * 0.005 * Math.PI + 180;
     var theta2 = -1 * theta1;
     ctx.clearRect(0, 0, canvas.width, canvas.height); // clear canvas
 
@@ -31,6 +33,7 @@ function setup() {
     }
     // ####################################################
 
+    // reference: https://stackoverflow.com/a/68398236
     function addAlpha(color, opacity) {
       // coerce values so ti is between 0 and 1.
       var _opacity = Math.round(Math.min(Math.max(opacity || 1, 0), 1) * 255);
@@ -48,7 +51,8 @@ function setup() {
 
     // draw outer circle (the path for Shin-chan to move around)
     function drawCircle() {
-      c = "#" + Math.floor(Math.random() * 15555555).toString(16);
+      c = "#" + Math.floor(Math.random() * 9800).toString(16);
+      c = "#" + Math.floor(Math.random() * 1099).toString(16);
       ctx.fillStyle = addAlpha(c, 0.5);
 
       var r = 190;
@@ -305,6 +309,8 @@ function setup() {
     main();
     window.requestAnimationFrame(draw);
   }
+
+  slider1.addEventListener("input", draw);
 
   draw();
 }
