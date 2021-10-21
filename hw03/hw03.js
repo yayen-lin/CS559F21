@@ -2,11 +2,22 @@ function setup() {
   var canvas = document.getElementById("hw03Canvas");
   var ctx = canvas.getContext("2d");
   var slider1 = document.getElementById("slider1");
+  var slider2 = document.getElementById("slider2");
+  var slider3 = document.getElementById("slider3");
   slider1.value = 150;
+  slider2.value = 1;
+  slider3.value = 1;
 
   function draw() {
+    // if (slider1.value < 160) {
+    //   var theta1 = slider1.value * 0.005 * Math.PI + 180;
+    //   var theta2 = -1 * theta1;
+    // } else {
+    //   // let the arms rotate by itself when it reaches 160
+    // }
     var theta1 = slider1.value * 0.005 * Math.PI + 180;
     var theta2 = -1 * theta1;
+    var rotateSpeed = slider2.value * 0.1;
     ctx.clearRect(0, 0, canvas.width, canvas.height); // clear canvas
 
     // colors
@@ -227,15 +238,13 @@ function setup() {
       ctx.stroke();
     }
 
-    // TODO: remove test
-    function drawTest() {
-      // fill setting
-      ctx.fillStyle = shirtColor;
-
-      ctx.beginPath();
-      moveToTx(0, 0);
-      lineToTx(100, 100);
-      ctx.stroke();
+    function rotateShinChan() {
+      var cx = 200;
+      var cy = 200;
+      ctx.save(); // default state
+      ctx.translate(cx, cy);
+      ctx.rotate(rotateSpeed * 0.05 * Math.PI);
+      ctx.translate(-cx, -cy);
     }
 
     // first gets drawed will lie in the bottom
@@ -243,14 +252,6 @@ function setup() {
       drawCircle();
 
       // #################### draw Shin-chan ####################
-
-      // TODO: try fix, or remove
-      // // adjust scale accordingly
-      // sc = 0.7;
-      // stack.unshift(mat3.clone(stack[0]));
-      // var shinChanScale = mat3.create();
-      // mat3.scale(shinChanScale, shinChanScale, [sc, sc]);
-      // mat3.multiply(stack[0], stack[0], shinChanScale);
 
       // draw left arm
       stack.unshift(mat3.clone(stack[0])); // save
@@ -303,7 +304,8 @@ function setup() {
       stack.shift(); // restore(), center at (121, 317)
       stack.shift(); // restore(), center back to (123, 272)
       stack.shift(); // restore(), center back to (0, 0)
-      // drawTest(); // TODO: remove this line
+
+      rotateShinChan();
     }
 
     main();
@@ -311,7 +313,7 @@ function setup() {
   }
 
   slider1.addEventListener("input", draw);
-
+  slider2.addEventListener("input", draw);
   draw();
 }
 window.onload = setup;
