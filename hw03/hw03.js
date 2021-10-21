@@ -12,6 +12,7 @@ function setup() {
     const socksColor = "#ffffff";
     const shoesColor = "#eec752";
 
+    // ####################################################
     // fucntions borrowed from week4/demo1/demo.js
     var stack = [mat3.create()];
 
@@ -26,12 +27,15 @@ function setup() {
       vec2.transformMat3(res, [x, y], stack[0]);
       ctx.lineTo(res[0], res[1]);
     }
+    // ####################################################
 
     function quadraticCurveToTx(cpx, cpy, x, y) {
       var res = vec2.create();
       vec2.transformMat3(res, [x, y], stack[0]);
       ctx.quadraticCurveTo(cpx, cpy, res[0], res[1]);
     }
+
+    function arcToTx(cx, cy, r, rs, re) {}
 
     // helper function
     // reset line settings back to default
@@ -47,6 +51,23 @@ function setup() {
       var r = 190;
       ctx.beginPath();
       ctx.arc(canvas.width / 2, canvas.height / 2, r, 0, 2 * Math.PI);
+      ctx.stroke();
+    }
+
+    function drawButts() {
+      // fill setting
+      ctx.fillStyle = skinColor;
+      ctx.lineWidth = 2;
+      // draw butts
+      // right butt
+      ctx.beginPath();
+      ctx.arc(247, 235, 55, 0, 2 * Math.PI);
+      ctx.fill();
+      ctx.stroke();
+      // left butt
+      ctx.beginPath();
+      ctx.arc(161, 235, 55, 0, 2 * Math.PI);
+      ctx.fill();
       ctx.stroke();
     }
 
@@ -107,7 +128,7 @@ function setup() {
       ctx.lineJoin = "round";
       ctx.fillStyle = skinColor;
 
-      // draw leg
+      // draw a leg
       ctx.beginPath();
       moveToTx(0, 0);
       lineToTx(-10, 14);
@@ -123,7 +144,7 @@ function setup() {
     function drawSock() {
       // fill setting
       ctx.fillStyle = socksColor;
-
+      // draw a sock
       ctx.beginPath();
       moveToTx(4, 30);
       lineToTx(13, 42);
@@ -137,7 +158,7 @@ function setup() {
     function drawShoe() {
       // fill setting
       ctx.fillStyle = shoesColor;
-
+      // draw a shoe
       ctx.beginPath();
       moveToTx(10, 42);
       lineToTx(16, 47);
@@ -158,17 +179,86 @@ function setup() {
     }
 
     function drawArm() {
-      // pass
+      // fill setting
+      ctx.fillStyle = shirtColor;
+      ctx.lineWidth = 2;
+      // draw an arm
+      ctx.beginPath();
+      moveToTx(0, 0);
+      lineToTx(-39, -52);
+      lineToTx(-40, -53);
+      lineToTx(-41, -54);
+      lineToTx(-42, -55);
+      lineToTx(-43, -54);
+      lineToTx(-44, -53);
+      lineToTx(-45, -50);
+      lineToTx(-46, -47);
+      lineToTx(-47, -44); // -8, +8
+      lineToTx(-8, 8);
+      ctx.closePath();
+      ctx.fill();
+      ctx.stroke();
+
+      // fill setting
+      ctx.fillStyle = skinColor;
+      // draw a hand
+      ctx.beginPath();
+      moveToTx(-47, -44);
+      lineToTx(-53, -52);
+      lineToTx(-53, -57);
+      lineToTx(-52, -62);
+      lineToTx(-51, -64);
+      lineToTx(-50, -67);
+      lineToTx(-48, -70);
+      lineToTx(-45, -71);
+      lineToTx(-43, -70);
+      lineToTx(-40, -68);
+      lineToTx(-35, -63);
+      ctx.closePath();
+      ctx.fill();
+      ctx.stroke();
+    }
+
+    // TODO: remove test
+    function drawTest() {
+      // fill setting
+      ctx.fillStyle = shirtColor;
+
+      ctx.beginPath();
+      moveToTx(0, 0);
+      lineToTx(-50, -50);
+      ctx.stroke();
     }
 
     function main() {
       drawCircle();
+
+      // #################### draw Shin-chan ####################
 
       // draw pants
       var pantsToCanvas = mat3.create();
       mat3.fromTranslation(pantsToCanvas, [120, 270]);
       mat3.multiply(stack[0], stack[0], pantsToCanvas);
       drawPants();
+
+      // draw left arm
+      stack.unshift(mat3.clone(stack[0])); // save
+      var leftArmToCanvas = mat3.create();
+      mat3.fromTranslation(leftArmToCanvas, [7, 0]);
+      mat3.multiply(stack[0], stack[0], leftArmToCanvas);
+      drawArm();
+
+      // draw right arm
+      stack.unshift(mat3.clone(stack[0]));
+      var rightArmToCanvas = mat3.create();
+      mat3.fromTranslation(rightArmToCanvas, [157, 0]);
+      mat3.scale(rightArmToCanvas, rightArmToCanvas, [-1, 1]);
+      mat3.multiply(stack[0], stack[0], rightArmToCanvas);
+      drawArm();
+      stack.shift(); // restore
+
+      // draw butt
+      drawButts();
 
       // draw left leg
       stack.unshift(mat3.clone(stack[0])); // save status
@@ -178,8 +268,6 @@ function setup() {
       drawLeg();
       drawSock();
       drawShoe();
-      drawArm();
-      stack.unshift();
 
       // draw right leg
       stack.unshift(mat3.clone(stack[0])); // save status
@@ -190,8 +278,11 @@ function setup() {
       drawLeg();
       drawSock();
       drawShoe();
-      drawArm();
-      stack.unshift();
+
+      // center at (285, 315)
+      stack.shift(); // restore(), center at (125, 315)
+      stack.shift(); // restore(), center back to (120, 270)
+      // drawTest();
     }
 
     main();
