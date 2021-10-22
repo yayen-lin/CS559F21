@@ -4,9 +4,14 @@ function setup() {
   var slider1 = document.getElementById("slider1");
   var slider2 = document.getElementById("slider2");
   var slider3 = document.getElementById("slider3");
-  slider1.value = 150;
+  var checkbox1 = document.getElementById("checkbox1");
+  var checkbox2 = document.getElementById("checkbox2");
+  var checkbox3 = document.getElementById("checkbox3");
+  slider1.value = 0;
   slider2.value = 1;
   slider3.value = 100;
+  var armGoUp = true;
+  var bounceGoUp = true;
 
   function draw() {
     // if (slider1.value < 160) {
@@ -15,12 +20,59 @@ function setup() {
     // } else {
     //   // let the arms rotate by itself when it reaches 160
     // }
+
+    /**
+     * convert degree to radian
+     * @param {*} d: to be converted to radian
+     * @returns a float of radian
+     */
+    function toRadian(d) {
+      return (d * Math.PI) / 180;
+    }
+
+    /**
+     * convert radian to degree
+     * @param {*} rad: to be converted to degree
+     * @returns an integer of degree
+     */
+    function toDegree(rad) {
+      return parseInt((rad * 180) / Math.PI);
+    }
+
     var cx = canvas.width / 2;
     var cy = canvas.height / 2;
-    var theta1 = slider1.value * 0.005 * Math.PI + 180;
+    var theta1 = toRadian(slider1.value); // range (-60, 10)
     var theta2 = -1 * theta1;
-    var theta3 = slider2.value * 0.005 * Math.PI;
-    var bouncingScale = slider3.value * 0.01;
+    var theta3 = toRadian(slider2.value); // range 0 - 400
+    var bouncingScale = slider3.value * 0.01; // range 80 - 100
+
+    if (checkbox1.checked) {
+      // arm-waving animation
+      if (armGoUp) {
+        theta1 = toRadian((slider1.value = parseInt(slider1.value) + 1));
+        if (parseInt(slider1.value) >= 10) armGoUp = false;
+      } else {
+        theta1 = toRadian((slider1.value = parseInt(slider1.value) - 1));
+        if (parseInt(slider1.value) <= -60) armGoUp = true;
+      }
+      theta2 = -theta1;
+
+      // spinning animation
+      theta3 = toRadian((slider2.value = parseInt(slider2.value) + 1));
+      if (parseInt(slider2.value) >= 360) slider2.value = 0;
+
+      // bouncing animation
+      if (bounceGoUp) {
+        slider3.value = parseInt(slider3.value) + 1;
+        bouncingScale = parseInt(slider3.value) * 0.01;
+        if (parseInt(slider3.value) >= 100) bounceGoUp = false;
+      } else {
+        slider3.value = parseInt(slider3.value) - 1;
+        bouncingScale = parseInt(slider3.value) * 0.01;
+        if (parseInt(slider3.value) <= 80) bounceGoUp = true;
+      }
+    }
+
     ctx.clearRect(0, 0, canvas.width, canvas.height); // clear canvas
 
     // use Date.now() % 10;
@@ -55,6 +107,8 @@ function setup() {
       ctx.arc(res[0], res[1], r, sr, er);
     }
 
+    // helper function
+    // add opacity to the color
     // reference: https://stackoverflow.com/a/68398236
     function addAlpha(color, opacity) {
       // coerce values so ti is between 0 and 1.
@@ -73,14 +127,15 @@ function setup() {
 
     // draw outer circle (the path for Shin-chan to move around)
     function drawCircle() {
-      c = "#" + Math.floor(Math.random() * 9800).toString(16);
       c = "#" + Math.floor(Math.random() * 1099).toString(16);
-      ctx.fillStyle = addAlpha(c, 0.5);
+      ctx.fillStyle = checkbox3.checked ? c : addAlpha(c, 0.5);
+      // ctx.fillStyle = addAlpha(c, 0.5);
+      // ctx.fillStyle = c;
 
       var r = 190;
       ctx.beginPath();
-      ctx.arc(canvas.width / 2, canvas.height / 2, r, 0, 2 * Math.PI);
-      // ctx.fill();
+      arcToTx(canvas.width / 2, canvas.height / 2, r, 0, 2 * Math.PI);
+      if (!checkbox2.checked) ctx.fill();
       ctx.stroke();
     }
 
@@ -344,6 +399,7 @@ function setup() {
   slider1.addEventListener("input", draw);
   slider2.addEventListener("input", draw);
   slider3.addEventListener("input", draw);
+  checkbox1.addEventListener("input", draw);
   draw();
 }
 window.onload = setup;

@@ -13,18 +13,23 @@
     <!-- style="border: 1px solid black" -->
     <canvas id="hw03Canvas" width="400" height="400"></canvas>
     <br />
-    <div style="line-height: 200%">
+    <b style="font-family: Arial; font-size: 0.9em">auto-animation: </b>
+    <input id="checkbox1" type="checkbox" min="1" max="10" />
+    <br />
+    <b style="font-family: Arial; font-size: 0.9em">background off: </b>
+    <input id="checkbox2" type="checkbox" min="1" max="10" />
+    <b style="font-family: Arial; font-size: 0.9em">background intense: </b>
+    <input id="checkbox3" type="checkbox" min="1" max="10" />
+    <br />
+    <div id="range_input_group" style="line-height: 200%">
       <b style="font-family: Arial; font-size: 0.9em">arms angle:</b>
-      <input id="slider1" type="range" min="10" max="160" />
+      <input id="slider1" type="range" min="-60" max="10" />
       <br />
-      <b style="font-family: Arial; font-size: 0.9em">rorate speed:</b>
-      <input id="slider2" type="range" min="1" max="180" />
+      <b style="font-family: Arial; font-size: 0.9em">rorate angle:</b>
+      <input id="slider2" type="range" min="0" max="400" />
       <br />
       <b style="font-family: Arial; font-size: 0.9em">bouncing scale: </b>
       <input id="slider3" type="range" min="80" max="100" />
-      <br />
-      <b style="font-family: Arial; font-size: 0.9em">number of Shin-chan: </b>
-      <input id="slider4" type="range" min="1" max="10" />
     </div>
     <script type="text/javascript" src="gl-matrix-min.js"></script>
     <script src="hw03.js" id="module"></script>
