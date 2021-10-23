@@ -399,7 +399,6 @@ function setup() {
   slider1.addEventListener("input", draw);
   slider2.addEventListener("input", draw);
   slider3.addEventListener("input", draw);
-  checkbox1.addEventListener("input", draw);
   draw();
 }
 window.onload = setup;
