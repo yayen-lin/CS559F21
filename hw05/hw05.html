@@ -1,0 +1,37 @@
+<!-- 
+  author: Yayen Lin
+  netID: lin383
+  Fall 2021 CS 559 Assignment 05
+  files: hw05.html, hw05.js
+ -->
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>CS559 HW05</title>
+  </head>
+  <body>
+    <!-- style="border: 1px solid black" -->
+    <div style="text-align: center; margin-top: 20px">
+      <canvas
+        id="hw05CanvasObserver"
+        width="500"
+        height="500"
+        style="border: 1px solid #888"
+      ></canvas>
+      <canvas
+        id="hw05CanvasCamera"
+        width="500"
+        height="500"
+        style="border: 1px solid #888"
+      ></canvas>
+      <br />
+      <p><------ observer view / camera view ------></p>
+    </div>
+    <br />
+    <input id="slider2" type="range" min="0" max="100" /> Move camera around
+    scene
+    <br />
+    <script type="text/javascript" src="gl-matrix-min.js"></script>
+    <script src="hw05.js" id="module"></script>
+  </body>
+</html>

@@ -14,13 +14,6 @@ function setup() {
   var bounceGoUp = true;
 
   function draw() {
-    // if (slider1.value < 160) {
-    //   var theta1 = slider1.value * 0.005 * Math.PI + 180;
-    //   var theta2 = -1 * theta1;
-    // } else {
-    //   // let the arms rotate by itself when it reaches 160
-    // }
-
     /**
      * convert degree to radian
      * @param {*} d: to be converted to radian
