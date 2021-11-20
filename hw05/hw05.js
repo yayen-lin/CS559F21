@@ -12,8 +12,8 @@ function setup() {
 
   function draw() {
     // clear both canvas instances
-    ctx.clearRect(0, 0, canvasObserver.width, canvasObserver.height);
-    ctx.clearRect(0, 0, canvasCamera.width, canvasCamera.height);
+    canvasObserver.width = canvasObserver.width;
+    canvasCamera.width = canvasCamera.width;
 
     // slider vars
     var viewAngle = slider2.value * 0.02 * Math.PI;
@@ -32,9 +32,9 @@ function setup() {
       ctx.lineTo(res[0], res[1]);
     }
 
-    function arcToTx(cx, cy, r, sr, er) {
+    function arcToTx(loc, Tx, r, sr, er) {
       var res = vec3.create();
-      vec2.transformMat4(res, [cx, cy], stack[0]);
+      vec3.transformMat4(res, loc, Tx);
       ctx.arc(res[0], res[1], r, sr, er);
     }
 
@@ -47,10 +47,20 @@ function setup() {
       return [eye[0], eye[1], eye[2]];
     };
 
-    function drawRickFrontSide(TxU, scale) {
+    function drawPortal(TxU) {
+      var Tx = mat4.clone(TxU);
+      mat4.scale(Tx, Tx, [0.1, 0.0001, 0.1]);
+      ctx.beginPath();
+      arcToTx([0, 0, 0], Tx, 100, 0, 2 * Math.PI);
+      // ctx.stroke();
+    }
+
+    function drawRickFaceShape(TxU, scale) {
+      // face outline
       var Tx = mat4.clone(TxU);
       mat4.scale(Tx, Tx, [scale, scale, scale]);
       ctx.beginPath();
+
       moveToTx([-0.05, -0.05, 0], Tx);
       lineToTx([-0.05, 0.05, 0], Tx);
       lineToTx([0.05, 0.05, 0], Tx);
@@ -60,57 +70,64 @@ function setup() {
       ctx.fill();
     }
 
+    function drawRickFrontSide(TxU, scale) {
+      drawRickFaceShape(TxU, scale);
+    }
+
     function drawRickBackSide() {}
 
-    // create two lookAt transforms; one for the camera
-    // and one for the "external observer"
-    // make sure you understand these
-    // Create Camera (lookAt) transform
+    //  -------------------------- LookAt transforms --------------------------
+
+    // lookAt trasnsform for "Camera" view
     var eyeCamera = CameraCurve(viewAngle);
-    var targetCamera = vec3.fromValues(0, 0, 0); // Aim at the origin of the world coords
+    var targetCamera = vec3.fromValues(0, 0, 0); // Camera points at the origin of the world coords
     var upCamera = vec3.fromValues(0, 100, 0); // Y-axis of world coords to be vertical
     var TlookAtCamera = mat4.create();
-    // (matrix written into, position of observer, point be looking at, vec3 pointing up)
+    // parameters for lookAt():
+    // (matrix written into, position of camera, point be looking at, vec3 pointing up)
     mat4.lookAt(TlookAtCamera, eyeCamera, targetCamera, upCamera);
 
-    // Create Observer (lookAt) transform
+    // lookAt transform for "Observer" view
     var eyeObserver = vec3.fromValues(500, 300, 500);
     var targetObserver = vec3.fromValues(0, 50, 0); // Observer still looks at origin
     var upObserver = vec3.fromValues(0, 1, 0); // Y-axis of world coords to be vertical
     var TlookAtObserver = mat4.create();
     mat4.lookAt(TlookAtObserver, eyeObserver, targetObserver, upObserver);
 
-    // [we only need one viewport transformation for both views]
-    // Create ViewPort (canvas coordinate) transform
-    // (assumed the same for both canvas instances)
+    // ------------------------- Viewpoint transforms -------------------------
+    // ------------- (assumed the same for both canvas instances) -------------
+
+    // create viewpoint transform
     var Tviewport = mat4.create();
     // Move the center of the "lookAt" transform (where
-    // the camera points) to the canvas coordinates (200,300)
-    mat4.fromTranslation(Tviewport, [200, 300, 0]);
+    // the camera points) to the canvas coordinates (250,250)
+    mat4.fromTranslation(Tviewport, [
+      canvasObserver.width / 2,
+      canvasObserver.height / 2,
+      0,
+    ]);
     // Flip the Y-axis, scale everything by 100x
     mat4.scale(Tviewport, Tviewport, [100, -100, 1]);
 
-    ctx = cameraContext;
+    // ------------------------ Projection transforms -------------------------
 
-    // Create Camera projection transform
-    // (orthographic for now)
+    // orthographic projection transform for "Camera" view
     var TprojectionCamera = mat4.create();
     mat4.ortho(TprojectionCamera, -100, 100, -100, 100, -1, 1);
-    // mat4.perspective(TprojectionCamera, Math.PI / 4, 1, -1, 1); // Use for perspective teaser!
 
-    // Create Observer projection transform
-    // (orthographic for now)
+    // orthographic projection transform for "Observer" view
     var TprojectionObserver = mat4.create();
     mat4.ortho(TprojectionObserver, -120, 120, -120, 120, -1, 1);
 
-    // Create transform t_VP_PROJ_CAM that incorporates
-    // Viewport, projection and camera transforms
+    // ---------------------- incorportes transforms -01 ----------------------
+    // ------ (incorporates viewport, projection, and lookAt transforms) ------
+
+    // for "Camera" view
     var tVP_PROJ_VIEW_Camera = mat4.create();
     mat4.multiply(tVP_PROJ_VIEW_Camera, Tviewport, TprojectionCamera);
     mat4.multiply(tVP_PROJ_VIEW_Camera, tVP_PROJ_VIEW_Camera, TlookAtCamera);
 
-    // Create transorm tVP_PROJ_VIEW_Observer that incorporates
-    // Viewport, projection and observer transforms
+    // for "Observer" view
     var tVP_PROJ_VIEW_Observer = mat4.create();
     mat4.multiply(tVP_PROJ_VIEW_Observer, Tviewport, TprojectionObserver);
     mat4.multiply(
@@ -119,21 +136,27 @@ function setup() {
       TlookAtObserver
     );
 
-    // [we only need one model transformation for both view]
-    // Create model(ing) transform
-    // (from moving object to world)
+    // --------------------------- Model transforms ---------------------------
+    // -------- (we only need one model transformation for both view) ---------
+
+    // from moving object to world
     var Tmodel = mat4.create();
     // mat4.fromTranslation(Tmodel, Ccomp(tParam));
     // var tangent = Ccomp_tangent(tParam);
     // var angle = Math.atan2(tangent[1], tangent[0]);
     // mat4.rotateZ(Tmodel, Tmodel, angle);
 
-    // Create transform t_VP_PROJ_VIEW_MOD that incorporates
-    // Viewport, projection, camera, and modeling transform
+    // ---------------------- incorportes transforms -02 ----------------------
+    // ----- (incorporates viewport, projection, lookAt, model transforms) ----
+
+    // for "Camera" view
     var tVP_PROJ_VIEW_MOD_Camera = mat4.create();
     mat4.multiply(tVP_PROJ_VIEW_MOD_Camera, tVP_PROJ_VIEW_Camera, Tmodel);
+
+    // for "Observer" view
     var tVP_PROJ_VIEW_MOD1_Observer = mat4.create();
     mat4.multiply(tVP_PROJ_VIEW_MOD1_Observer, tVP_PROJ_VIEW_Observer, Tmodel);
+
     var tVP_PROJ_VIEW_MOD2_Observer = mat4.create();
     mat4.translate(
       tVP_PROJ_VIEW_MOD2_Observer,
@@ -150,11 +173,13 @@ function setup() {
 
     // Draw the following in the Camera window
     ctx = cameraContext;
-    drawRickFrontSide(tVP_PROJ_VIEW_MOD_Camera, 100.0);
+    drawRickFrontSide(tVP_PROJ_VIEW_MOD_Camera, 150.0);
+    drawPortal(tVP_PROJ_VIEW_MOD_Camera, 100.0);
 
     // Draw the following in the Observer window
     ctx = observerContext;
-    drawRickFrontSide(tVP_PROJ_VIEW_MOD1_Observer, 100.0);
+    drawRickFrontSide(tVP_PROJ_VIEW_Observer, 150.0);
+    drawPortal(tVP_PROJ_VIEW_Observer);
   }
 
   // slider1.addEventListener("input", draw);
