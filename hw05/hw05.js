@@ -6,7 +6,7 @@ function setup() {
   // var slider1 = document.getElementById("slider1");
   // slider1.value = 0;
   var slider2 = document.getElementById("slider2");
-  slider2.value = 5;
+  slider2.value = 0;
 
   var ctx = cameraContext; // default to drawing in the camera window
 
@@ -55,23 +55,161 @@ function setup() {
       // ctx.stroke();
     }
 
-    function drawRickFaceShape(TxU, scale) {
+    function drawRickHeadShape(TxU) {
       // face outline
       var Tx = mat4.clone(TxU);
-      mat4.scale(Tx, Tx, [scale, scale, scale]);
       ctx.beginPath();
 
-      moveToTx([-0.05, -0.05, 0], Tx);
-      lineToTx([-0.05, 0.05, 0], Tx);
-      lineToTx([0.05, 0.05, 0], Tx);
-      lineToTx([0.1, 0, 0], Tx);
-      lineToTx([0.05, -0.05, 0], Tx);
-      ctx.closePath();
-      ctx.fill();
+      // draw head shape
+      var beginx = -75;
+      var beginy = -75;
+      moveToTx([beginx, beginy, 0], Tx);
+      lineToTx([(beginx += 1), (beginy += 20), 0], Tx);
+      lineToTx([(beginx += 2.5), (beginy += 30), 0], Tx);
+      lineToTx([(beginx += 4), (beginy += 30), 0], Tx);
+      lineToTx([(beginx += 6), (beginy += 30), 0], Tx);
+      lineToTx([(beginx += 8), (beginy += 30), 0], Tx);
+      lineToTx([(beginx += 10), (beginy += 18), 0], Tx);
+      lineToTx([(beginx += 12), (beginy += 16), 0], Tx);
+      lineToTx([(beginx += 4), (beginy += 2), 0], Tx);
+      lineToTx([(beginx += 2), (beginy += 1.8), 0], Tx);
+      lineToTx([(beginx += 2), (beginy += 1.6), 0], Tx);
+      lineToTx([(beginx += 2), (beginy += 1.4), 0], Tx);
+      lineToTx([(beginx += 2), (beginy += 1.2), 0], Tx);
+      lineToTx([(beginx += 2), (beginy += 1), 0], Tx);
+      lineToTx([(beginx += 3), (beginy += 0.8), 0], Tx);
+      lineToTx([(beginx += 3), (beginy += 0.6), 0], Tx);
+      lineToTx([(beginx += 3), (beginy += 0.4), 0], Tx);
+      lineToTx([(beginx += 3), (beginy += 0.2), 0], Tx);
+      lineToTx([(beginx += 2), (beginy += 0), 0], Tx);
+
+      // symmetric around this point
+      lineToTx([(beginx += 2), (beginy += 0.2), 0], Tx);
+
+      lineToTx([(beginx += 2), (beginy += 0), 0], Tx);
+      lineToTx([(beginx += 3), (beginy -= 0.2), 0], Tx);
+      lineToTx([(beginx += 3), (beginy -= 0.4), 0], Tx);
+      lineToTx([(beginx += 3), (beginy -= 0.6), 0], Tx);
+      lineToTx([(beginx += 3), (beginy -= 0.8), 0], Tx);
+      lineToTx([(beginx += 2), (beginy -= 1), 0], Tx);
+      lineToTx([(beginx += 2), (beginy -= 1.2), 0], Tx);
+      lineToTx([(beginx += 2), (beginy -= 1.4), 0], Tx);
+      lineToTx([(beginx += 2), (beginy -= 1.6), 0], Tx);
+      lineToTx([(beginx += 2), (beginy -= 1.8), 0], Tx);
+      lineToTx([(beginx += 4), (beginy -= 2), 0], Tx);
+      lineToTx([(beginx += 12), (beginy -= 16), 0], Tx);
+      lineToTx([(beginx += 10), (beginy -= 18), 0], Tx);
+      lineToTx([(beginx += 8), (beginy -= 30), 0], Tx);
+      lineToTx([(beginx += 6), (beginy -= 30), 0], Tx);
+      lineToTx([(beginx += 4), (beginy -= 30), 0], Tx);
+      lineToTx([(beginx += 2.5), (beginy -= 30), 0], Tx);
+      lineToTx([(beginx += 1), (beginy -= 20), 0], Tx);
+      ctx.stroke();
+
+      // draw right face shape
+      ctx.beginPath();
+      var faceShapeBeginX = beginx - 10;
+      var faceShapeBeginY = beginy + 8;
+      moveToTx([faceShapeBeginX, faceShapeBeginY, 0], Tx);
+      lineToTx([(faceShapeBeginX += 5), (faceShapeBeginY -= 2), 0], Tx);
+      lineToTx([(faceShapeBeginX += 3), (faceShapeBeginY -= 3), 0], Tx);
+      lineToTx([(faceShapeBeginX += 3), (faceShapeBeginY -= 5), 0], Tx);
+      lineToTx([(faceShapeBeginX += 3.5), (faceShapeBeginY -= 7), 0], Tx);
+      lineToTx([(faceShapeBeginX += 2), (faceShapeBeginY -= 7), 0], Tx);
+      lineToTx([(faceShapeBeginX += 1.5), (faceShapeBeginY -= 7), 0], Tx);
+      lineToTx([(faceShapeBeginX += 0.75), (faceShapeBeginY -= 7), 0], Tx);
+      lineToTx([(faceShapeBeginX += 0), (faceShapeBeginY -= 5), 0], Tx); // symmetric around this point
+      lineToTx([(faceShapeBeginX -= 0.75), (faceShapeBeginY -= 7), 0], Tx);
+      lineToTx([(faceShapeBeginX -= 1.5), (faceShapeBeginY -= 7), 0], Tx);
+      lineToTx([(faceShapeBeginX -= 3), (faceShapeBeginY -= 7), 0], Tx);
+      lineToTx([(faceShapeBeginX -= 4.5), (faceShapeBeginY -= 7), 0], Tx);
+      lineToTx([(faceShapeBeginX -= 4), (faceShapeBeginY -= 5), 0], Tx);
+      lineToTx([(faceShapeBeginX -= 4), (faceShapeBeginY -= 3), 0], Tx);
+      lineToTx([(faceShapeBeginX -= 4), (faceShapeBeginY -= 2), 0], Tx);
+      ctx.stroke();
+
+      // draw chin
+      ctx.beginPath();
+      chineShapeBeginX = faceShapeBeginX + 8;
+      chineShapeBeginY = faceShapeBeginY + 4;
+      moveToTx([chineShapeBeginX, chineShapeBeginY, 0], Tx);
+      lineToTx([(chineShapeBeginX -= 4), (chineShapeBeginY -= 5), 0], Tx);
+      lineToTx([(chineShapeBeginX -= 4), (chineShapeBeginY -= 8), 0], Tx);
+      lineToTx([(chineShapeBeginX -= 3), (chineShapeBeginY -= 4), 0], Tx);
+      lineToTx([(chineShapeBeginX -= 2), (chineShapeBeginY -= 2), 0], Tx);
+      lineToTx([(chineShapeBeginX -= 2), (chineShapeBeginY -= 2), 0], Tx);
+      lineToTx([(chineShapeBeginX -= 2), (chineShapeBeginY -= 2), 0], Tx);
+      lineToTx([(chineShapeBeginX -= 2), (chineShapeBeginY -= 2), 0], Tx);
+      lineToTx([(chineShapeBeginX -= 2), (chineShapeBeginY -= 2), 0], Tx);
+      lineToTx([(chineShapeBeginX -= 2), (chineShapeBeginY -= 2), 0], Tx);
+      lineToTx([(chineShapeBeginX -= 3), (chineShapeBeginY -= 2), 0], Tx);
+      lineToTx([(chineShapeBeginX -= 3), (chineShapeBeginY -= 1.8), 0], Tx);
+      lineToTx([(chineShapeBeginX -= 3), (chineShapeBeginY -= 1.6), 0], Tx);
+      lineToTx([(chineShapeBeginX -= 3), (chineShapeBeginY -= 1.4), 0], Tx);
+      lineToTx([(chineShapeBeginX -= 3), (chineShapeBeginY -= 1.2), 0], Tx);
+      lineToTx([(chineShapeBeginX -= 3), (chineShapeBeginY -= 1), 0], Tx);
+      lineToTx([(chineShapeBeginX -= 3), (chineShapeBeginY -= 0.9), 0], Tx);
+      lineToTx([(chineShapeBeginX -= 3), (chineShapeBeginY -= 0.8), 0], Tx);
+      lineToTx([(chineShapeBeginX -= 3), (chineShapeBeginY -= 0.7), 0], Tx);
+      lineToTx([(chineShapeBeginX -= 3), (chineShapeBeginY -= 0.6), 0], Tx);
+      lineToTx([(chineShapeBeginX -= 3), (chineShapeBeginY -= 0.5), 0], Tx);
+      lineToTx([(chineShapeBeginX -= 3), (chineShapeBeginY -= 0.4), 0], Tx);
+      lineToTx([(chineShapeBeginX -= 3), (chineShapeBeginY -= 0.3), 0], Tx);
+      lineToTx([(chineShapeBeginX -= 3), (chineShapeBeginY -= 0.2), 0], Tx);
+      lineToTx([(chineShapeBeginX -= 3), (chineShapeBeginY -= 0.1), 0], Tx);
+      lineToTx([(chineShapeBeginX -= 3), (chineShapeBeginY -= 0), 0], Tx);
+      lineToTx([(chineShapeBeginX -= 3), (chineShapeBeginY += 0.1), 0], Tx);
+      lineToTx([(chineShapeBeginX -= 3), (chineShapeBeginY += 0.2), 0], Tx);
+      lineToTx([(chineShapeBeginX -= 3), (chineShapeBeginY += 0.3), 0], Tx);
+      lineToTx([(chineShapeBeginX -= 3), (chineShapeBeginY += 0.4), 0], Tx);
+      lineToTx([(chineShapeBeginX -= 3), (chineShapeBeginY += 0.5), 0], Tx);
+      lineToTx([(chineShapeBeginX -= 3), (chineShapeBeginY += 0.6), 0], Tx);
+      lineToTx([(chineShapeBeginX -= 3), (chineShapeBeginY += 0.7), 0], Tx);
+      lineToTx([(chineShapeBeginX -= 3), (chineShapeBeginY += 0.8), 0], Tx);
+      lineToTx([(chineShapeBeginX -= 3), (chineShapeBeginY += 0.9), 0], Tx);
+      lineToTx([(chineShapeBeginX -= 3), (chineShapeBeginY += 1), 0], Tx);
+      lineToTx([(chineShapeBeginX -= 3), (chineShapeBeginY += 1.2), 0], Tx);
+      lineToTx([(chineShapeBeginX -= 3), (chineShapeBeginY += 1.4), 0], Tx);
+      lineToTx([(chineShapeBeginX -= 3), (chineShapeBeginY += 1.6), 0], Tx);
+      lineToTx([(chineShapeBeginX -= 3), (chineShapeBeginY += 1.8), 0], Tx);
+      lineToTx([(chineShapeBeginX -= 3), (chineShapeBeginY += 2), 0], Tx);
+      lineToTx([(chineShapeBeginX -= 2), (chineShapeBeginY += 2), 0], Tx);
+      lineToTx([(chineShapeBeginX -= 2), (chineShapeBeginY += 2), 0], Tx);
+      lineToTx([(chineShapeBeginX -= 2), (chineShapeBeginY += 2), 0], Tx);
+      lineToTx([(chineShapeBeginX -= 2), (chineShapeBeginY += 2), 0], Tx);
+      lineToTx([(chineShapeBeginX -= 2), (chineShapeBeginY += 2), 0], Tx);
+      lineToTx([(chineShapeBeginX -= 2), (chineShapeBeginY += 2), 0], Tx);
+      lineToTx([(chineShapeBeginX -= 3), (chineShapeBeginY += 4), 0], Tx);
+      lineToTx([(chineShapeBeginX -= 4), (chineShapeBeginY += 8), 0], Tx);
+      lineToTx([(chineShapeBeginX -= 4), (chineShapeBeginY += 5), 0], Tx);
+      ctx.stroke();
+
+      // draw left face shape
+      var faceShapeBeginX = 68;
+      var faceShapeBeginY = -70;
+      mat4.scale(Tx, Tx, [-1, 1, 1]);
+      ctx.beginPath();
+      moveToTx([faceShapeBeginX, faceShapeBeginY, 0], Tx);
+      lineToTx([(faceShapeBeginX += 5), (faceShapeBeginY -= 2), 0], Tx);
+      lineToTx([(faceShapeBeginX += 3), (faceShapeBeginY -= 3), 0], Tx);
+      lineToTx([(faceShapeBeginX += 3), (faceShapeBeginY -= 5), 0], Tx);
+      lineToTx([(faceShapeBeginX += 3.5), (faceShapeBeginY -= 7), 0], Tx);
+      lineToTx([(faceShapeBeginX += 2), (faceShapeBeginY -= 7), 0], Tx);
+      lineToTx([(faceShapeBeginX += 1.5), (faceShapeBeginY -= 7), 0], Tx);
+      lineToTx([(faceShapeBeginX += 0.75), (faceShapeBeginY -= 7), 0], Tx);
+      lineToTx([(faceShapeBeginX += 0), (faceShapeBeginY -= 5), 0], Tx); // symmetric around this point
+      lineToTx([(faceShapeBeginX -= 0.75), (faceShapeBeginY -= 7), 0], Tx);
+      lineToTx([(faceShapeBeginX -= 1.5), (faceShapeBeginY -= 7), 0], Tx);
+      lineToTx([(faceShapeBeginX -= 3), (faceShapeBeginY -= 7), 0], Tx);
+      lineToTx([(faceShapeBeginX -= 4.5), (faceShapeBeginY -= 7), 0], Tx);
+      lineToTx([(faceShapeBeginX -= 4), (faceShapeBeginY -= 5), 0], Tx);
+      lineToTx([(faceShapeBeginX -= 4), (faceShapeBeginY -= 3), 0], Tx);
+      lineToTx([(faceShapeBeginX -= 4), (faceShapeBeginY -= 2), 0], Tx);
+      ctx.stroke();
     }
 
     function drawRickFrontSide(TxU, scale) {
-      drawRickFaceShape(TxU, scale);
+      drawRickHeadShape(TxU, scale);
     }
 
     function drawRickBackSide() {}
@@ -171,14 +309,14 @@ function setup() {
       TlookFromCamera
     );
 
-    // Draw the following in the Camera window
+    // Draw in the Camera window
     ctx = cameraContext;
-    drawRickFrontSide(tVP_PROJ_VIEW_MOD_Camera, 150.0);
+    drawRickFrontSide(tVP_PROJ_VIEW_MOD_Camera);
     drawPortal(tVP_PROJ_VIEW_MOD_Camera, 100.0);
 
-    // Draw the following in the Observer window
+    // Draw in the Observer window
     ctx = observerContext;
-    drawRickFrontSide(tVP_PROJ_VIEW_Observer, 150.0);
+    drawRickFrontSide(tVP_PROJ_VIEW_Observer);
     drawPortal(tVP_PROJ_VIEW_Observer);
   }
 
